@@ -16,7 +16,7 @@ subprocess.call([r"LIQ-VERTICAL\CONECTA_VPN.BAT"])
 try:
    # CONECTA CON LA BBDD ORACLE DE SARHA
    engine = sqlalchemy.create_engine("oracle+cx_oracle://jorellana:R3L4N43@10.2.2.21:1521/SAXE2012")
-   # EJECUTA LA QUERY PARA OBTENER LOS EMBARGOS JUDICIALES
+   # EJECUTA LA QUERY PARA OBTENER LIQUIDACION VERTICAL
    embargos_sql = f"""SELECT 
 	el.nro_liquidacion,
     el.cuit,
@@ -57,7 +57,7 @@ order by
    subprocess.call([r"LIQ-VERTICAL\DESCONECTA_VPN.BAT"])
    # COPIA ARCHIVOS EXCEL A CARPETA EMBARGOS
    ruta_origen="LIQ-VERTICAL\SALIDA"
-   ruta_destino="S:/LDDAT/SARHA/"
+   ruta_destino="S:/LDDAT/SARHA/REPORTES/"
    shutil.copytree(ruta_origen, ruta_destino, dirs_exist_ok=True)
 except SQLAlchemyError as e:
    print(e)
