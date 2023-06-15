@@ -1,5 +1,5 @@
 import pandas as pd
-import cx_Oracle
+import oracledb
 import sqlalchemy
 from sqlalchemy.exc import SQLAlchemyError
 import openpyxl
@@ -15,7 +15,7 @@ subprocess.call([r"LA-CAJA-AHORRO\CONECTA_VPN.BAT"])
 
 try:
    # CONECTA CON LA BBDD ORACLE DE SARHA
-   engine = sqlalchemy.create_engine("oracle+cx_oracle://jorellana:R3L4N43@10.2.2.21:1521/SAXE2012")
+   engine = sqlalchemy.create_engine("oracle+oracledb://jorellana:R3L4N43@10.2.2.21:1521/SAXE2012")
    # EJECUTA LA QUERY PARA OBTENER LOS DESCUENTOS DEL 4% y 6,4%
    embargos_sql = f"""SELECT * 
 FROM (

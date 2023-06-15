@@ -1,11 +1,12 @@
 import pandas as pd
-import cx_Oracle
 import sqlalchemy
 from sqlalchemy.exc import SQLAlchemyError
 import openpyxl
 import subprocess
 import shutil
 import os
+import oracledb
+
 
 # Ingresar numero de liquidacion
 numero_liquidacion = int(input('Ingrese el numero de liquidacion: '))
@@ -15,7 +16,7 @@ subprocess.call([r"DESCUENTO-CSS\CONECTA_VPN.BAT"])
 
 try:
    # CONECTA CON LA BBDD ORACLE DE SARHA
-   engine = sqlalchemy.create_engine("oracle+cx_oracle://jorellana:R3L4N43@10.2.2.21:1521/SAXE2012")
+   engine = sqlalchemy.create_engine("oracle+oracledb://jorellana:R3L4N43@10.2.2.21:1521/SAXE2012")
    # EJECUTA LA QUERY PARA OBTENER LOS DESCUENTOS DEL 4% y 6,4%
    embargos_sql = f"""SELECT C.NRO_LIQUIDACION, A.CUIT, A.CUIL, A.APELLIDO, A.NOMBRE, A.TOTAL_REMUNERACIONES,  SUM(VALOR) AS DESCUENTO_TOTAL
 FROM SARHA.CONCEPTO_LIQUIDACION C 

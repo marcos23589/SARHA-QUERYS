@@ -1,5 +1,5 @@
 import pandas as pd
-import cx_Oracle
+import oracledb
 import sqlalchemy
 from sqlalchemy.exc import SQLAlchemyError
 import openpyxl
@@ -15,7 +15,7 @@ subprocess.call([r"LIQ-VERTICAL\CONECTA_VPN.BAT"])
 
 try:
    # CONECTA CON LA BBDD ORACLE DE SARHA
-   engine = sqlalchemy.create_engine("oracle+cx_oracle://jorellana:R3L4N43@10.2.2.21:1521/SAXE2012")
+   engine = sqlalchemy.create_engine("oracle+oracledb://jorellana:R3L4N43@10.2.2.21:1521/SAXE2012")
    # EJECUTA LA QUERY PARA OBTENER LIQUIDACION VERTICAL
    embargos_sql = f"""SELECT 
 	el.nro_liquidacion,

@@ -1,11 +1,11 @@
 import pandas as pd
-import cx_Oracle
 import sqlalchemy
 from sqlalchemy.exc import SQLAlchemyError
 import openpyxl
 import subprocess
 import shutil
 import os
+import oracledb
 
 
 ### --- Dicccionario con denominaciones estandar para archivos
@@ -33,7 +33,7 @@ subprocess.call([r"CONECTA_VPN.BAT"])
 
 try:
    # CONECTA CON LA BBDD ORACLE DE SARHA
-   engine = sqlalchemy.create_engine("oracle+cx_oracle://jorellana:R3L4N43@10.2.2.21:1521/SAXE2012")
+   engine = sqlalchemy.create_engine("oracle+oracledb://jorellana:R3L4N43@10.2.2.21:1521/SAXE2012")
    # EJECUTA LA QUERY PARA OBTENER LOS EMBARGOS JUDICIALES
    embargos_sql = f"""SELECT cl.nro_liquidacion, EL.CUIT, CO.DESCRIPCION as ORGANISMO, EL.CUIL, EL.APELLIDO, EL.NOMBRE,  CL.COD_CONCEPTO, CL.COD_SUBCONCEPTO, CP.DESCRIPCION AS DESCRIPCION_CAUSA, O.CAUSA_JUDICIAL, cl.valor
 FROM SARHA.concepto_liquidacion CL,
