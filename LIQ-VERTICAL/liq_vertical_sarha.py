@@ -11,7 +11,7 @@ import os
 numero_liquidacion = int(input('Ingrese el numero de liquidacion: '))
 
 # CONECTA CON LA VPN DE SARHA
-subprocess.call([r"LIQ-VERTICAL\CONECTA_VPN.BAT"])
+subprocess.call([r"CONECTA_VPN.BAT"])
 
 try:
    # CONECTA CON LA BBDD ORACLE DE SARHA
@@ -51,12 +51,12 @@ order by
    # CREA EL DATAFRAME DE EMBARGOS DE LA CONSULTA SQL
    df_vertical = pd.read_sql(embargos_sql, engine)
        
-   df_vertical.to_excel(f'LIQ-VERTICAL\SALIDA\LIQ-VERTICAL-{numero_liquidacion}.xlsx', index=False)
+   df_vertical.to_excel(f'SALIDA\LIQ-VERTICAL-{numero_liquidacion}.xlsx', index=False)
    
    # TERMINA LA CONEXION DE LA VPN
-   subprocess.call([r"LIQ-VERTICAL\DESCONECTA_VPN.BAT"])
+   subprocess.call([r"DESCONECTA_VPN.BAT"])
    # COPIA ARCHIVOS EXCEL A CARPETA EMBARGOS
-   ruta_origen="LIQ-VERTICAL\SALIDA"
+   ruta_origen="SALIDA"
    ruta_destino="S:/LDDAT/SARHA/REPORTES/"
    shutil.copytree(ruta_origen, ruta_destino, dirs_exist_ok=True)
 except SQLAlchemyError as e:

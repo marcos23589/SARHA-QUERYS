@@ -1,17 +1,18 @@
 import pandas as pd
-import oracledb
 import sqlalchemy
 from sqlalchemy.exc import SQLAlchemyError
 import openpyxl
 import subprocess
 import shutil
 import os
+import oracledb
+
 
 # Ingresar numero de liquidacion
 numero_liquidacion = int(input('Ingrese el numero de liquidacion: '))
 
 # CONECTA CON LA VPN DE SARHA
-subprocess.call([r"LA-CAJA-AHORRO\CONECTA_VPN.BAT"])
+subprocess.call([r"CONECTA_VPN.BAT"])
 
 try:
    # CONECTA CON LA BBDD ORACLE DE SARHA
@@ -53,13 +54,13 @@ WHERE
    # CREA EL DATAFRAME DE EMBARGOS DE LA CONSULTA SQL
    df_vertical = pd.read_sql(embargos_sql, engine)
        
-   df_vertical.to_excel(f'LA-CAJA-AHORRO\SALIDA\LA CAJA AHORRO SEGUROS.xlsx', index=False)
+   df_vertical.to_excel(f'SALIDA\LA CAJA AHORRO SEGUROS.xlsx', index=False)
    
    # TERMINA LA CONEXION DE LA VPN
-   subprocess.call([r"LA-CAJA-AHORRO\DESCONECTA_VPN.BAT"])
+   subprocess.call([r"DESCONECTA_VPN.BAT"])
    # COPIA ARCHIVOS EXCEL A CARPETA EMBARGOS
-   ruta_origen="LA-CAJA-AHORRO\SALIDA"
-   ruta_destino="S:/LDDAT/SARHA/DESCUENTOS"
+   ruta_origen="SALIDA"
+   ruta_destino="S:/LDDAT/SARHA/DESCUENTOS/"
    shutil.copytree(ruta_origen, ruta_destino, dirs_exist_ok=True)
 except SQLAlchemyError as e:
    print(e)
