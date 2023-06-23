@@ -12,7 +12,9 @@ import oracledb
 numero_liquidacion = int(input('Ingrese el numero de liquidacion: '))
 
 # CONECTA CON LA VPN DE SARHA
-subprocess.call([r"CONECTA_VPN.BAT"])
+conecta = 'rasdial "MEFI-01" "MEFI-01" "JPP33D1"' 
+conexion_vpn = subprocess.run(conecta, capture_output=True, text=True)
+#subprocess.call([r"CONECTA_VPN.BAT"])
 
 try:
    # CONECTA CON LA BBDD ORACLE DE SARHA
@@ -31,10 +33,14 @@ group by C.NRO_LIQUIDACION, A.CUIT, A.CUIL, A.APELLIDO, A.NOMBRE, A.TOTAL_REMUNE
    df_vertical.to_excel(f'SALIDA\APORTES-CSS-{numero_liquidacion}.xlsx', index=False)
    
    # TERMINA LA CONEXION DE LA VPN
-   subprocess.call([r"DESCONECTA_VPN.BAT"])
+   desconecta = 'rasdial "MEFI-01" /DISCONNECT'
+   desconexion_vpn = subprocess.run(desconecta, capture_output=True, text=True)
+   #subprocess.call([r"DESCONECTA_VPN.BAT"])
+   
    # COPIA ARCHIVOS EXCEL A CARPETA EMBARGOS
    ruta_origen="SALIDA"
    ruta_destino="S:/LDDAT/SARHA/REPORTES"
    shutil.copytree(ruta_origen, ruta_destino, dirs_exist_ok=True)
+   print("Proceso terminado correctamente")   
 except SQLAlchemyError as e:
    print(e)
