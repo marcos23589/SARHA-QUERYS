@@ -30,7 +30,7 @@ group by C.NRO_LIQUIDACION, A.CUIT, A.CUIL, A.APELLIDO, A.NOMBRE, A.TOTAL_REMUNE
    # CREA EL DATAFRAME DE EMBARGOS DE LA CONSULTA SQL
    df_vertical = pd.read_sql(embargos_sql, engine)
        
-   df_vertical.to_excel(f'SALIDA\APORTES-CSS-{numero_liquidacion}.xlsx', index=False)
+   df_vertical.to_excel(f'./SALIDA/APORTES-CSS-{numero_liquidacion}.xlsx', index=False)
    
    # TERMINA LA CONEXION DE LA VPN
    desconecta = 'rasdial "MEFI-01" /DISCONNECT'
