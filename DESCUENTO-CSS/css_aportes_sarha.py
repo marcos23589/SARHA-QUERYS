@@ -20,12 +20,26 @@ try:
    # CONECTA CON LA BBDD ORACLE DE SARHA
    engine = sqlalchemy.create_engine("oracle+oracledb://jorellana:R3L4N43@10.2.2.21:1521/SAXE2012")
    # EJECUTA LA QUERY PARA OBTENER LOS DESCUENTOS DEL 4% y 6,4%
-   embargos_sql = f"""SELECT C.NRO_LIQUIDACION, A.CUIT, A.CUIL, A.APELLIDO, A.NOMBRE, A.TOTAL_REMUNERACIONES,  SUM(VALOR) AS DESCUENTO_TOTAL
-FROM SARHA.CONCEPTO_LIQUIDACION C 
-JOIN SARHA.EMPLEADO_LIQUIDACION A
-ON A.CUIL = C.CUIL AND A.NRO_LIQUIDACION = C.NRO_LIQUIDACION 
-WHERE A.NRO_LIQUIDACION = {numero_liquidacion} AND (C.COD_CONCEPTO = 322 OR C.COD_CONCEPTO = 622 OR C.COD_CONCEPTO = 323 OR C.COD_CONCEPTO = 623)
-group by C.NRO_LIQUIDACION, A.CUIT, A.CUIL, A.APELLIDO, A.NOMBRE, A.TOTAL_REMUNERACIONES
+   embargos_sql = f"""SELECT 
+    el.nro_liquidacion,
+    el.cuit,
+    co.descripcion,
+    cl.cuil,
+    el.apellido || ', ' || el.nombre as nombre_completo, 
+    sum(case when cl.cod_clase_concepto = 1 and not cl.cod_concepto = 70 and not cl.cod_concepto = 617 then  cl.valor else 0 end) as REMUNERATIVO,
+    sum(case when cl.cod_concepto = 322 or cl.cod_concepto = 622 or cl.cod_concepto = 323 or cl.cod_concepto = 623 then cl.valor else 0 end) as RETENCION_CSS
+
+FROM 
+    sarha.concepto_liquidacion cl,
+    sarha.empleado_liquidacion el,
+    sarha.cuit_organismo co
+where 
+    el.nro_liquidacion = cl.nro_liquidacion
+    and el.cuil = cl.cuil
+    and el.cuit = co.cuit
+    and cl.nro_liquidacion = {numero_liquidacion}
+    and el.no_paga is null
+group by el.nro_liquidacion, el.cuit, co.descripcion, cl.cuil, el.apellido, el.nombre
 """;
    # CREA EL DATAFRAME DE EMBARGOS DE LA CONSULTA SQL
    df_vertical = pd.read_sql(embargos_sql, engine)
