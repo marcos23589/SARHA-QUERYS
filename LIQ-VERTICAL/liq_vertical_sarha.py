@@ -20,16 +20,15 @@ try:
    engine = sqlalchemy.create_engine("oracle+oracledb://jorellana:R3L4N43@10.2.2.21:1521/SAXE2012")
    # EJECUTA LA QUERY PARA OBTENER LIQUIDACION VERTICAL
    embargos_sql = f"""SELECT 
-	el.nro_liquidacion,
+el.nro_liquidacion,
     el.cuit,
     c.descripcion,
     cl.periodo_desde,
     cl.cuil,
-    el.apellido,
-    el.nombre,
-    el.cod_escalafon,
+    el.apellido || ', ' || el.nombre as nombre_completo,
+    -- el.cod_escalafon,
     el.descripcion_escalafon,
-    el.cod_funcion,
+    -- el.cod_funcion,
     el.descripcion_funcion,
     cl.cod_concepto,
     cl.descripcion_concepto,
@@ -43,10 +42,17 @@ from
     sarha.cuit_organismo c
 
 where 
-    cl.nro_liquidacion = {numero_liquidacion} 
+    cl.nro_liquidacion = {numero_liquidacion}
     and el.cuit = c.cuit
     and el.cuil = cl.cuil
     and el.nro_liquidacion = cl.nro_liquidacion
+    and el.no_paga is NULL
+    and not cl.descripcion_concepto LIKE 'INT%'	    
+    -- SIN CONTRIBUCUIONES DEL EMPLEADOR
+    and not cl.cod_clase_concepto = 16
+    -- CONTRIBUCUIONES DEL EMPLEADOR
+    -- and cl.cod_clase_concepto = 16
+    
 order by
     cl.cuil
 """;
