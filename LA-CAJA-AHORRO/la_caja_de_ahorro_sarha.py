@@ -11,14 +11,14 @@ import oracledb
 # Ingresar numero de liquidacion
 numero_liquidacion = int(input('Ingrese el numero de liquidacion: '))
 
-# CONECTA CON LA VPN DE SARHA
-conecta = 'rasdial "MEFI-01" "MEFI-01" "JPP33D1"' 
-conexion_vpn = subprocess.run(conecta, capture_output=True, text=True)
-#subprocess.call([r"CONECTA_VPN.BAT"])
+# # CONECTA CON LA VPN DE SARHA
+# conecta = 'rasdial "MEFI-01" "MEFI-01" "JPP33D1"' 
+# conexion_vpn = subprocess.run(conecta, capture_output=True, text=True)
+# #subprocess.call([r"CONECTA_VPN.BAT"])
 
 try:
    # CONECTA CON LA BBDD ORACLE DE SARHA
-   engine = sqlalchemy.create_engine("oracle+oracledb://jorellana:R3L4N43@10.2.2.21:1521/SAXE2012")
+   engine = sqlalchemy.create_engine("oracle+oracledb://jorellana:R3L4N43@10.0.56.10:1521/SAXE2012")
    # EJECUTA LA QUERY PARA OBTENER LOS DESCUENTOS DEL 4% y 6,4%
    embargos_sql = f"""SELECT * 
 FROM (
@@ -58,11 +58,11 @@ WHERE
        
    df_vertical.to_excel(f'./SALIDA/SARHA-LA CAJA AHORRO SEGUROS.xlsx', index=False)
    
-   # TERMINA LA CONEXION DE LA VPN
+#    # TERMINA LA CONEXION DE LA VPN
    
-   desconecta = 'rasdial "MEFI-01" /DISCONNECT'
-   desconexion_vpn = subprocess.run(desconecta, capture_output=True, text=True)
-   #subprocess.call([r"DESCONECTA_VPN.BAT"])
+#    desconecta = 'rasdial "MEFI-01" /DISCONNECT'
+#    desconexion_vpn = subprocess.run(desconecta, capture_output=True, text=True)
+#    #subprocess.call([r"DESCONECTA_VPN.BAT"])
    
    # COPIA ARCHIVOS EXCEL A CARPETA EMBARGOS
    ruta_origen="SALIDA"

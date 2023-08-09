@@ -21,22 +21,26 @@ dict_denominaciones = {
 	'(CSC) CASA DE SANTA CRUZ': 'CASA',
 	'(GOB) GOBERNACIÓN': 'GOBE',
 	'(JGM) MINISTERIO JEFATURA DE GABINETE DE MINISTROS': 'JGAB',
-	'(HTD) HONORABLE TRIBUNAL DISCIPLINARIO': 'HTDI'
-	
+	'(HTD) HONORABLE TRIBUNAL DISCIPLINARIO': 'HTDI',
+   '(LOAS) LOTERIA DE ACCION SOCIAL DE STA CRUZ': 'LOAS',
+   '(MII) MINISTERIO DE LA IGUALDAD E INTEGRACIÓN': 'MIEI',
+   '(ICT) INSTITUTO DE CIENCIA, TECNOLOGIA E INNOVACION': 'CYTEC',
+   '(ISPRO) ISPRO': 'ISPRO'	
 }
+
 
 
 
 numero_liquidacion = int(input('Ingrese el numero de liquidacion: '))
 
-# CONECTA CON LA VPN DE SARHA
-conecta = 'rasdial "MEFI-01" "MEFI-01" "JPP33D1"' 
-conexion_vpn = subprocess.run(conecta, capture_output=True, text=True)
-#subprocess.call([r"CONECTA_VPN.BAT"])
+# # CONECTA CON LA VPN DE SARHA
+# conecta = 'rasdial "MEFI-01" "MEFI-01" "JPP33D1"' 
+# conexion_vpn = subprocess.run(conecta, capture_output=True, text=True)
+# #subprocess.call([r"CONECTA_VPN.BAT"])
 
 try:
    # CONECTA CON LA BBDD ORACLE DE SARHA
-   engine = sqlalchemy.create_engine("oracle+oracledb://jorellana:R3L4N43@10.2.2.21:1521/SAXE2012")
+   engine = sqlalchemy.create_engine("oracle+oracledb://jorellana:R3L4N43@10.0.56.10:1521/SAXE2012")
    # EJECUTA LA QUERY PARA OBTENER LOS EMBARGOS JUDICIALES
    embargos_sql = f"""SELECT cl.nro_liquidacion, EL.CUIT, CO.DESCRIPCION as ORGANISMO, EL.CUIL, EL.APELLIDO, EL.NOMBRE,  CL.COD_CONCEPTO, CL.COD_SUBCONCEPTO, CP.DESCRIPCION AS DESCRIPCION_CAUSA, O.CAUSA_JUDICIAL, cl.valor
 FROM SARHA.concepto_liquidacion CL,
@@ -69,10 +73,10 @@ WHERE CL.CUIL = EL.CUIL
       df1 = df_embargos[df_embargos['organismo'] == organismo]
       df1.to_excel(F'./SALIDA/EMBARGOS-{dict_denominaciones.get(organismo)}.xlsx', index=False)
    
-   # TERMINA LA CONEXION DE LA VPN
-   desconecta = 'rasdial "MEFI-01" /DISCONNECT'
-   desconexion_vpn = subprocess.run(desconecta, capture_output=True, text=True)
-   #subprocess.call([r"DESCONECTA_VPN.BAT"])
+   # # TERMINA LA CONEXION DE LA VPN
+   # desconecta = 'rasdial "MEFI-01" /DISCONNECT'
+   # desconexion_vpn = subprocess.run(desconecta, capture_output=True, text=True)
+   # #subprocess.call([r"DESCONECTA_VPN.BAT"])
    
    # COPIA ARCHIVOS EXCEL A CARPETA EMBARGOS
    ruta_origen="./SALIDA"
