@@ -33,8 +33,8 @@ dict_denominaciones = {
 #numero_liquidacion = int(input('Ingrese el numero de liquidacion: '))
 
 # CONECTA CON LA VPN DE SARHA
-conecta = 'rasdial "MEFI-01" "MEFI-01" "JPP33D1"' 
-conexion_vpn = subprocess.run(conecta, capture_output=True, text=True)
+#conecta = 'rasdial "MEFI-01" "MEFI-01" "JPP33D1"' 
+#conexion_vpn = subprocess.run(conecta, capture_output=True, text=True)
 #subprocess.call([r"CONECTA_VPN.BAT"])
 
 try:
