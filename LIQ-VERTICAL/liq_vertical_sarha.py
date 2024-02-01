@@ -10,11 +10,6 @@ import os
 # Ingresar numero de liquidacion
 numero_liquidacion = int(input('Ingrese el numero de liquidacion: '))
 
-# # CONECTA CON LA VPN DE SARHA
-# conecta = 'rasdial "MEFI-01" "MEFI-01" "JPP33D1"' 
-# conexion_vpn = subprocess.run(conecta, capture_output=True, text=True)
-# #subprocess.call([r"CONECTA_VPN.BAT"])
-
 try:
    # CONECTA CON LA BBDD ORACLE DE SARHA
    engine = sqlalchemy.create_engine("oracle+oracledb://jorellana:R3L4N43@10.0.56.10:1521/SAXE2012")
@@ -60,11 +55,6 @@ order by
    df_vertical = pd.read_sql(embargos_sql, engine)
        
    df_vertical.to_excel(f'SALIDA\LIQ-VERTICAL-{numero_liquidacion}.xlsx', index=False)
-   
-#    # TERMINA LA CONEXION DE LA VPN
-#    desconecta = 'rasdial "MEFI-01" /DISCONNECT'
-#    desconexion_vpn = subprocess.run(desconecta, capture_output=True, text=True)
-#    #subprocess.call([r"DESCONECTA_VPN.BAT"])
    
    # COPIA ARCHIVOS EXCEL A CARPETA EMBARGOS
    ruta_origen="SALIDA"

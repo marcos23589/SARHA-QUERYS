@@ -28,15 +28,6 @@ dict_denominaciones = {
     '(ISPRO) ISPRO': 'ISPRO'	
 }
 
-
-
-#numero_liquidacion = int(input('Ingrese el numero de liquidacion: '))
-
-# CONECTA CON LA VPN DE SARHA
-#conecta = 'rasdial "MEFI-01" "MEFI-01" "JPP33D1"' 
-#conexion_vpn = subprocess.run(conecta, capture_output=True, text=True)
-#subprocess.call([r"CONECTA_VPN.BAT"])
-
 try:
    # CONECTA CON LA BBDD ORACLE DE SARHA
    engine = sqlalchemy.create_engine("oracle+oracledb://jorellana:R3L4N43@10.2.2.21:1521/SAXE2012")
@@ -77,7 +68,6 @@ ORDER BY
    # TERMINA LA CONEXION DE LA VPN
    desconecta = 'rasdial "MEFI-01" /DISCONNECT'
    desconexion_vpn = subprocess.run(desconecta, capture_output=True, text=True)
-   #subprocess.call([r"DESCONECTA_VPN.BAT"])
    
    # COPIA ARCHIVOS EXCEL A CARPETA EMBARGOS
    ruta_origen="./SALIDA"

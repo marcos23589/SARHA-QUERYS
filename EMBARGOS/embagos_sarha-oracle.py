@@ -30,14 +30,7 @@ dict_denominaciones = {
 }
 
 
-
-
 numero_liquidacion = int(input('Ingrese el numero de liquidacion: '))
-
-# # CONECTA CON LA VPN DE SARHA
-# conecta = 'rasdial "MEFI-01" "MEFI-01" "JPP33D1"' 
-# conexion_vpn = subprocess.run(conecta, capture_output=True, text=True)
-# #subprocess.call([r"CONECTA_VPN.BAT"])
 
 try:
    # CONECTA CON LA BBDD ORACLE DE SARHA
@@ -73,11 +66,6 @@ WHERE CL.CUIL = EL.CUIL
       print(f"Procesado organismo: {organismo}")
       df1 = df_embargos[df_embargos['organismo'] == organismo]
       df1.to_excel(F'./SALIDA/EMBARGOS-{dict_denominaciones.get(organismo)}.xlsx', index=False)
-   
-   # # TERMINA LA CONEXION DE LA VPN
-   # desconecta = 'rasdial "MEFI-01" /DISCONNECT'
-   # desconexion_vpn = subprocess.run(desconecta, capture_output=True, text=True)
-   # #subprocess.call([r"DESCONECTA_VPN.BAT"])
    
    # COPIA ARCHIVOS EXCEL A CARPETA EMBARGOS
    ruta_origen="./SALIDA"
