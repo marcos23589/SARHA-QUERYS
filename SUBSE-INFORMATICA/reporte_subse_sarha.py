@@ -6,6 +6,10 @@ import openpyxl
 import subprocess
 import shutil
 import os
+import sys
+sys.path.append(os.path.abspath('..'))
+from modulos import borra_directorio
+import modulos
 
 # Ingresar numero de liquidacion
 numero_liquidacion = int(input('Ingrese el numero de liquidacion: '))
@@ -52,6 +56,12 @@ where
 order by
     cl.cuil
 """;
+   ruta_origen="SALIDA"
+   ruta_destino="S:/LDDAT/SARHA/REPORTES/"
+   
+   # llamamos al modulo borra_directorio(funcion delete_directory) 
+   borra_directorio.delete_directory(ruta_origen)
+   
    # CREA EL DATAFRAME DE EMBARGOS DE LA CONSULTA SQL
    df_vertical = pd.read_sql(embargos_sql, engine)
        
@@ -61,6 +71,17 @@ order by
    # COPIA ARCHIVOS EXCEL A CARPETA EMBARGOS
    ruta_origen="SALIDA"
    ruta_destino="S:/LDDAT/SARHA/REPORTES/"
+   
+   # BORRO TODOS LOS ARCHIVOS DE LA CARPETA SALIDA ANTES DE GENERAR UN NUEVO ARCHIVO
+   # Obtener la lista de archivos en el directorio
+   archivos = os.listdir(ruta_origen)   
+   # Iterar sobre la lista de archivos y eliminarlos uno por uno
+   for archivo in archivos:
+    ruta_completa = os.path.join(ruta_origen, archivo)
+   if os.path.isfile(ruta_completa):  # Verificar si es un archivo (no un directorio)
+    os.remove(ruta_completa)
+    
+   #Copio archivos a la carpeta del servidor   
    shutil.copytree(ruta_origen, ruta_destino, dirs_exist_ok=True)
    print("Proceso terminado correctamente")
 except SQLAlchemyError as e:

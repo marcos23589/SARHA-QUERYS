@@ -85,6 +85,17 @@ ORDER BY
    # COPIA ARCHIVOS EXCEL A CARPETA EMBARGOS
    ruta_origen="./SALIDA"
    ruta_destino="S:/LDDAT/SARHA/REPORTES"
+   
+   # BORRO TODOS LOS ARCHIVOS DE LA CARPETA SALIDA ANTES DE GENERAR UN NUEVO ARCHIVO
+   # Obtener la lista de archivos en el directorio
+   archivos = os.listdir(ruta_origen)   
+   # Iterar sobre la lista de archivos y eliminarlos uno por uno
+   for archivo in archivos:
+    ruta_completa = os.path.join(ruta_origen, archivo)
+   if os.path.isfile(ruta_completa):  # Verificar si es un archivo (no un directorio)
+    os.remove(ruta_completa)
+    
+   #Copio archivos a la carpeta del servidor   
    shutil.copytree(ruta_origen, ruta_destino, dirs_exist_ok=True)
    print("Proceso terminado correctamente")   
 except SQLAlchemyError as e:

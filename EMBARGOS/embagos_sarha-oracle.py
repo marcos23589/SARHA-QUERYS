@@ -1,11 +1,15 @@
 import pandas as pd
+import oracledb
 import sqlalchemy
 from sqlalchemy.exc import SQLAlchemyError
 import openpyxl
 import subprocess
 import shutil
 import os
-import oracledb
+import sys
+sys.path.append(os.path.abspath('..'))
+from modulos import borra_directorio
+import modulos
 
 
 ### --- Dicccionario con denominaciones estandar para archivos
@@ -56,6 +60,13 @@ WHERE CL.CUIL = EL.CUIL
     AND (CL.COD_CONCEPTO = 481 OR CL.COD_CONCEPTO = 482) 
     AND CL.VALOR < 0
 """;
+
+   ruta_origen="SALIDA"
+   ruta_destino="S:/LDDAT/SARHA/REPORTES/"
+   
+   # llamamos al modulo borra_directorio(funcion delete_directory) 
+   borra_directorio.delete_directory(ruta_origen)
+   
    # CREA EL DATAFRAME DE EMBARGOS DE LA CONSULTA SQL
    df_embargos = pd.read_sql(embargos_sql, engine)
    
@@ -66,10 +77,8 @@ WHERE CL.CUIL = EL.CUIL
       print(f"Procesado organismo: {organismo}")
       df1 = df_embargos[df_embargos['organismo'] == organismo]
       df1.to_excel(F'./SALIDA/EMBARGOS-{dict_denominaciones.get(organismo)}.xlsx', index=False)
-   
-   # COPIA ARCHIVOS EXCEL A CARPETA EMBARGOS
-   ruta_origen="./SALIDA"
-   ruta_destino="S:/LDDAT/SARHA/EMBARGOS"
+
+   #Copio archivos a la carpeta del servidor   
    shutil.copytree(ruta_origen, ruta_destino, dirs_exist_ok=True)
    print("Proceso terminado correctamente")   
 except SQLAlchemyError as e:

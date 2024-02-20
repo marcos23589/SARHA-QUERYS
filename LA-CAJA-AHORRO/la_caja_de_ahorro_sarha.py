@@ -1,12 +1,15 @@
 import pandas as pd
+import oracledb
 import sqlalchemy
 from sqlalchemy.exc import SQLAlchemyError
 import openpyxl
 import subprocess
 import shutil
 import os
-import oracledb
-
+import sys
+sys.path.append(os.path.abspath('..'))
+from modulos import borra_directorio
+import modulos
 
 # Ingresar numero de liquidacion
 numero_liquidacion = int(input('Ingrese el numero de liquidacion: '))
@@ -48,14 +51,18 @@ FROM (
 WHERE 
     not (CODIGO352 = 0 and CODIGO353 = 0 and CODIGO354 = 0 and CODIGO355 = 0 and CODIGO356 = 0)
 """;
+   ruta_origen="SALIDA"
+   ruta_destino="S:/LDDAT/SARHA/REPORTES/"
+   
+   # llamamos al modulo borra_directorio(funcion delete_directory) 
+   borra_directorio.delete_directory(ruta_origen)
+   
    # CREA EL DATAFRAME DE EMBARGOS DE LA CONSULTA SQL
    df_vertical = pd.read_sql(embargos_sql, engine)
        
    df_vertical.to_excel(f'./SALIDA/SARHA-LA CAJA AHORRO SEGUROS.xlsx', index=False)
-   
-   # COPIA ARCHIVOS EXCEL A CARPETA EMBARGOS
-   ruta_origen="SALIDA"
-   ruta_destino="S:/LDDAT/SARHA/DESCUENTOS/"
+      
+   #Copio archivos a la carpeta del servidor   
    shutil.copytree(ruta_origen, ruta_destino, dirs_exist_ok=True)
    print("Proceso terminado correctamente")
 except SQLAlchemyError as e:

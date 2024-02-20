@@ -1,11 +1,16 @@
 import pandas as pd
+import oracledb
 import sqlalchemy
 from sqlalchemy.exc import SQLAlchemyError
 import openpyxl
 import subprocess
 import shutil
 import os
-import oracledb
+import sys
+sys.path.append(os.path.abspath('..'))
+from modulos import borra_directorio
+import modulos
+
 
 
 ### --- Dicccionario con denominaciones estandar para archivos
@@ -54,6 +59,12 @@ ORDER BY
     c.descripcion, el.apellido, el.nombre
 
 """;
+   ruta_origen="SALIDA"
+   ruta_destino="S:/LDDAT/SARHA/REPORTES/"
+   
+   # llamamos al modulo borra_directorio(funcion delete_directory) 
+   borra_directorio.delete_directory(ruta_origen)
+   
    # CREA EL DATAFRAME DE EMBARGOS DE LA CONSULTA SQL
    df_embargos = pd.read_sql(embargos_sql, engine)
    
@@ -65,9 +76,6 @@ ORDER BY
       df1 = df_embargos[df_embargos['descripcion'] == organismo]
       df1.to_excel(F'./SALIDA/CONCUENTA-{dict_denominaciones.get(organismo)}.xlsx', index=False)
    
-   # TERMINA LA CONEXION DE LA VPN
-   desconecta = 'rasdial "MEFI-01" /DISCONNECT'
-   desconexion_vpn = subprocess.run(desconecta, capture_output=True, text=True)
    
    # COPIA ARCHIVOS EXCEL A CARPETA EMBARGOS
    ruta_origen="./SALIDA"
