@@ -11,6 +11,7 @@ sys.path.append(os.path.abspath('..'))
 from modulos import borra_directorio
 import modulos
 
+contador = 0
 
 ### --- Dicccionario con denominaciones estandar para archivos
 dict_denominaciones = {
@@ -62,7 +63,7 @@ WHERE CL.CUIL = EL.CUIL
 """;
 
    ruta_origen="SALIDA"
-   ruta_destino="S:/LDDAT/SARHA/REPORTES/"
+   ruta_destino="S:/LDDAT/SARHA/EMBARGOS/"
    
    # llamamos al modulo borra_directorio(funcion delete_directory) 
    borra_directorio.delete_directory(ruta_origen)
@@ -74,10 +75,17 @@ WHERE CL.CUIL = EL.CUIL
    organismos = df_embargos['organismo'].unique()
    
    for organismo in organismos:
+      contador += 1
       print(f"Procesado organismo: {organismo}")
       df1 = df_embargos[df_embargos['organismo'] == organismo]
       df1.to_excel(F'./SALIDA/EMBARGOS-{dict_denominaciones.get(organismo)}.xlsx', index=False)
-
+      
+   ## Verifico la cantidad de organismos   
+   if contador > 0:
+      print(f"Cantidad de organismos: {contador}")
+   else:
+      print("No hay embargos")
+      
    #Copio archivos a la carpeta del servidor   
    shutil.copytree(ruta_origen, ruta_destino, dirs_exist_ok=True)
    print("Proceso terminado correctamente")   
