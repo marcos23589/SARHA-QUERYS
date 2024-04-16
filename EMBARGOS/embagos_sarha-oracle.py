@@ -10,6 +10,12 @@ import sys
 sys.path.append(os.path.abspath('..'))
 from modulos import borra_directorio
 import modulos
+from dotenv import load_dotenv
+
+
+# Cargar variables de entorno
+load_dotenv()
+
 
 contador = 0
 
@@ -39,7 +45,7 @@ numero_liquidacion = int(input('Ingrese el numero de liquidacion: '))
 
 try:
    # CONECTA CON LA BBDD ORACLE DE SARHA
-   engine = sqlalchemy.create_engine("oracle+oracledb://jorellana:R3L4N43@10.0.56.10:1521/SAXE2012")
+   engine = sqlalchemy.create_engine(os.getenv('USUARIO_ORACLE'))
    # EJECUTA LA QUERY PARA OBTENER LOS EMBARGOS JUDICIALES
    embargos_sql = f"""SELECT cl.nro_liquidacion, EL.CUIT, CO.DESCRIPCION as ORGANISMO, EL.CUIL, EL.APELLIDO, EL.NOMBRE,  CL.COD_CONCEPTO, CL.COD_SUBCONCEPTO, CP.DESCRIPCION AS DESCRIPCION_CAUSA, O.CAUSA_JUDICIAL, cl.valor
 FROM SARHA.concepto_liquidacion CL,

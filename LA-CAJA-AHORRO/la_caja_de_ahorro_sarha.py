@@ -10,13 +10,18 @@ import sys
 sys.path.append(os.path.abspath('..'))
 from modulos import borra_directorio
 import modulos
+from dotenv import load_dotenv
+
+
+# Cargar variables de entorno
+load_dotenv()
 
 # Ingresar numero de liquidacion
 numero_liquidacion = int(input('Ingrese el numero de liquidacion: '))
 
 try:
    # CONECTA CON LA BBDD ORACLE DE SARHA
-   engine = sqlalchemy.create_engine("oracle+oracledb://jorellana:R3L4N43@10.0.56.10:1521/SAXE2012")
+   engine = sqlalchemy.create_engine(os.getenv('USUARIO_ORACLE'))
    # EJECUTA LA QUERY PARA OBTENER LOS DESCUENTOS DEL 4% y 6,4%
    embargos_sql = f"""SELECT * 
 FROM (
