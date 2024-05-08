@@ -1,17 +1,19 @@
-import pandas as pd
+import os
+import shutil
+import subprocess
+import sys
+
+import openpyxl
 import oracledb
+import pandas as pd
 import sqlalchemy
 from sqlalchemy.exc import SQLAlchemyError
-import openpyxl
-import subprocess
-import shutil
-import os
-import sys
+
 sys.path.append(os.path.abspath('..'))
-from modulos import borra_directorio
-import modulos
 from dotenv import load_dotenv
 
+import modulos
+from modulos import borra_directorio
 
 # Cargar variables de entorno
 load_dotenv()
@@ -51,9 +53,18 @@ where
     and el.cuil = cl.cuil
     and el.nro_liquidacion = cl.nro_liquidacion
     and el.no_paga is NULL
-    and not cl.descripcion_concepto LIKE 'INT%'	    
+    -- or el.no_paga = 2
+    and cl.cod_concepto in (select cod_concepto from sarha.concepto where remunerativo_recibo in(1,2) )
+    
+    -- valor 1 conc de pago y descuento
+    -- valor 2 aportes y retenciones personales
+    -- valor 3 contrib patronales
+    -- valor 4 intermedios (ayudas para calculos)
+
+    
+    -- and not cl.descripcion_concepto LIKE 'INT%'
     -- SIN CONTRIBUCUIONES DEL EMPLEADOR
-    and not cl.cod_clase_concepto = 16
+    -- and not cl.cod_clase_concepto = 16
     -- CONTRIBUCUIONES DEL EMPLEADOR
     -- and cl.cod_clase_concepto = 16
     
