@@ -39,13 +39,15 @@ el.nro_liquidacion,
     cl.cod_concepto,
     cl.descripcion_concepto,
     cl.cod_subconcepto,
+    co.remunerativo_recibo,
     cl.descripcion_subconcepto,
     cl.valor
     
 from 
     sarha.concepto_liquidacion cl,
     sarha.empleado_liquidacion el,
-    sarha.cuit_organismo c
+    sarha.cuit_organismo c,
+    sarha.concepto co
 
 where 
     cl.nro_liquidacion = {numero_liquidacion}
@@ -54,7 +56,7 @@ where
     and el.nro_liquidacion = cl.nro_liquidacion
     and el.no_paga is NULL
     -- or el.no_paga = 2
-    and cl.cod_concepto in (select cod_concepto from sarha.concepto where remunerativo_recibo in(1,2) )
+    and cl.cod_concepto in (select co.cod_concepto from sarha.concepto where co.remunerativo_recibo in (1,2) )
     
     -- valor 1 conc de pago y descuento
     -- valor 2 aportes y retenciones personales
