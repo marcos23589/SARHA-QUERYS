@@ -58,8 +58,8 @@ where
     -- or el.no_paga = 2
     and cl.cod_concepto in (select co.cod_concepto from sarha.concepto where co.remunerativo_recibo in (1,2) )
     
-    -- valor 1 conc de pago y descuento
-    -- valor 2 aportes y retenciones personales
+    -- valor 1 conc de pago
+    -- valor 2 aportes y descuentos/retenciones personales
     -- valor 3 contrib patronales
     -- valor 4 intermedios (ayudas para calculos)
     --
