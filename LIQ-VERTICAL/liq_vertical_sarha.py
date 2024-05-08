@@ -9,7 +9,7 @@ import pandas as pd
 import sqlalchemy
 from sqlalchemy.exc import SQLAlchemyError
 
-sys.path.append(os.path.abspath('..'))
+sys.path.append(os.path.abspath(".."))
 from dotenv import load_dotenv
 
 import modulos
@@ -17,15 +17,15 @@ from modulos import borra_directorio
 
 # Cargar variables de entorno
 load_dotenv()
- 
+
 # Ingresar numero de liquidacion
-numero_liquidacion = int(input('Ingrese el numero de liquidacion: '))
+numero_liquidacion = int(input("Ingrese el numero de liquidacion: "))
 
 try:
-   # CONECTA CON LA BBDD ORACLE DE SARHA
-   engine = sqlalchemy.create_engine(os.getenv('USUARIO_ORACLE'))
-   # EJECUTA LA QUERY PARA OBTENER LIQUIDACION VERTICAL
-   embargos_sql = f"""SELECT 
+    # CONECTA CON LA BBDD ORACLE DE SARHA
+    engine = sqlalchemy.create_engine(os.getenv("USUARIO_ORACLE"))
+    # EJECUTA LA QUERY PARA OBTENER LIQUIDACION VERTICAL
+    embargos_sql = f"""SELECT 
 el.nro_liquidacion,
     el.cuit,
     c.descripcion,
@@ -60,7 +60,7 @@ where
     -- valor 2 aportes y retenciones personales
     -- valor 3 contrib patronales
     -- valor 4 intermedios (ayudas para calculos)
-
+    --
     
     -- and not cl.descripcion_concepto LIKE 'INT%'
     -- SIN CONTRIBUCUIONES DEL EMPLEADOR
@@ -70,20 +70,20 @@ where
     
 order by
     cl.cuil
-""";
-   ruta_origen="SALIDA"
-   ruta_destino="S:/LDDAT/SARHA/REPORTES/"
-   
-   # llamamos al modulo borra_directorio(funcion delete_directory) 
-   borra_directorio.delete_directory(ruta_origen)
-   
-   # CREA EL DATAFRAME DE EMBARGOS DE LA CONSULTA SQL
-   df_vertical = pd.read_sql(embargos_sql, engine)
-        
-   df_vertical.to_excel(f"SALIDA\LIQ-VERTICAL-{numero_liquidacion}.xlsx", index=False)    
-   
-   #Copio archivos a la carpeta del servidor     
-   shutil.copytree(ruta_origen, ruta_destino, dirs_exist_ok=True)
-   print("Proceso terminado correctamente")
+"""
+    ruta_origen = "SALIDA"
+    ruta_destino = "S:/LDDAT/SARHA/REPORTES/"
+
+    # llamamos al modulo borra_directorio(funcion delete_directory)
+    borra_directorio.delete_directory(ruta_origen)
+
+    # CREA EL DATAFRAME DE EMBARGOS DE LA CONSULTA SQL
+    df_vertical = pd.read_sql(embargos_sql, engine)
+
+    df_vertical.to_excel(f"SALIDA\LIQ-VERTICAL-{numero_liquidacion}.xlsx", index=False)
+
+    # Copio archivos a la carpeta del servidor
+    shutil.copytree(ruta_origen, ruta_destino, dirs_exist_ok=True)
+    print("Proceso terminado correctamente")
 except SQLAlchemyError as e:
-   print(e)
+    print(e)
