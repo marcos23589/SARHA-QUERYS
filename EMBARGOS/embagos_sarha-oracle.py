@@ -86,7 +86,7 @@ WHERE CL.CUIL = EL.CUIL
       contador += 1
       print(f"Procesado organismo: {organismo}")
       df1 = df_embargos[df_embargos['organismo'] == organismo]
-      df1.to_excel(F'./SALIDA/EMBARGOS-{dict_denominaciones.get(organismo)}-{numero_liquidacion}.xlsx', index=False)
+      df1.to_excel(F'./SALIDA/EMBARGOS-{dict_denominaciones.get(organismo)}.xlsx', index=False)
       
    ## Verifico la cantidad de organismos   
    if contador > 0:
