@@ -49,7 +49,18 @@ try:
    # CONECTA CON LA BBDD ORACLE DE SARHA
    engine = sqlalchemy.create_engine(os.getenv('USUARIO_ORACLE'))
    # EJECUTA LA QUERY PARA OBTENER LOS EMBARGOS JUDICIALES
-   embargos_sql = f"""SELECT cl.nro_liquidacion, EL.CUIT, CO.DESCRIPCION as ORGANISMO, EL.CUIL, EL.APELLIDO, EL.NOMBRE,  CL.COD_CONCEPTO, CL.COD_SUBCONCEPTO, CP.DESCRIPCION AS DESCRIPCION_CAUSA, O.CAUSA_JUDICIAL, cl.valor
+   embargos_sql = f"""SELECT cl.nro_liquidacion,
+   EL.CUIT, 
+   CO.DESCRIPCION as ORGANISMO, 
+   EL.CUIL,
+   EL.APELLIDO,
+   EL.NOMBRE,  
+   CL.COD_CONCEPTO,
+   CL.COD_SUBCONCEPTO,
+   CP.DESCRIPCION AS DESCRIPCION_CAUSA,
+   O.CAUSA_JUDICIAL,
+   cl.valor
+   
 FROM SARHA.concepto_liquidacion CL,
     SARHA.empleado_liquidacion EL,
     SARHA.cuit_organismo CO,
