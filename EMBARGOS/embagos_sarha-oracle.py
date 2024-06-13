@@ -78,7 +78,8 @@ WHERE CL.CUIL = EL.CUIL
     AND EC.COD_OFICIOS = O.COD_OFICIOS
     AND CL.nro_liquidacion = {numero_liquidacion}
     AND (CL.COD_CONCEPTO = 481 OR CL.COD_CONCEPTO = 482) 
-    AND CL.VALOR < 0
+    AND CL.VALOR < 0    
+    AND EL.NO_PAGA IS NULL
 """;
 
    ruta_origen="SALIDA"
