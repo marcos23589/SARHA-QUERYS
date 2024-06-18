@@ -32,9 +32,7 @@ el.nro_liquidacion,
     cl.periodo_desde,
     cl.cuil,
     el.apellido || ', ' || el.nombre as nombre_completo,
-    -- el.cod_escalafon,
     el.descripcion_escalafon,
-    -- el.cod_funcion,
     el.descripcion_funcion,
     cl.cod_concepto,
     cl.descripcion_concepto,
@@ -55,16 +53,14 @@ where
     and el.cuil = cl.cuil
     and el.nro_liquidacion = cl.nro_liquidacion
     and el.no_paga is NULL
-    -- or el.no_paga = 2
     and cl.cod_concepto in (select co.cod_concepto from sarha.concepto where co.remunerativo_recibo in (1,2) )
-    and cl.cod_concepto <> 899
+    and cl.valor <> 0
     
+    -- and cl.concepto <> 899    
     -- valor 1 conc de pago
     -- valor 2 aportes y descuentos/retenciones personales
     -- valor 3 contrib patronales
     -- valor 4 intermedios (ayudas para calculos)
-    --
-    
     -- and not cl.descripcion_concepto LIKE 'INT%'
     -- SIN CONTRIBUCUIONES DEL EMPLEADOR
     -- and not cl.cod_clase_concepto = 16
