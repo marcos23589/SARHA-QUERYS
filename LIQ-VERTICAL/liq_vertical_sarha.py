@@ -57,6 +57,7 @@ where
     and el.no_paga is NULL
     -- or el.no_paga = 2
     and cl.cod_concepto in (select co.cod_concepto from sarha.concepto where co.remunerativo_recibo in (1,2) )
+    and cl.cod_concepto <> 899
     
     -- valor 1 conc de pago
     -- valor 2 aportes y descuentos/retenciones personales
