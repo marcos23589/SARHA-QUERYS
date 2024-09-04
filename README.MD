@@ -1,6 +1,5 @@
 # entrar en el entorno virtual
-cd .venv
-cd Scripts
+cd .venv/Scripts
 # ejecutar el script
 activate
 # en la raiz
