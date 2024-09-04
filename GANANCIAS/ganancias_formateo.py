@@ -2,13 +2,14 @@ import datetime
 import pandas as pd
 from tkinter import filedialog
 
+# se carga el archivo TXT que sale desde el programa LIQAFIP.COB
 
 # cuadro de carga del archivo
 def cargar_archivo():
     archivo = filedialog.askopenfilename(filetypes=[("Archivos TXT", "*.txt")])
+    print(type(archivo))
     df = pd.read_csv(archivo, sep=";", skipinitialspace=True, encoding="latin-1")
     return df
-
 
 # Lista personalizada para los nombres de las columnas
 columnas = [
@@ -91,7 +92,7 @@ df_consolidado = consolidar_cuiles(ordenado)
 
 # se convierte el DataFrame a Excel
 df_consolidado.to_excel(
-    f"salida-{datetime.datetime.now().microsecond}.xlsx",
+    f"SALIDA/salida-{datetime.datetime.now().microsecond}.xlsx",
     sheet_name="hoja1",
     header=True,
     index=False,
