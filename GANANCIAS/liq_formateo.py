@@ -28,7 +28,7 @@ def cargar_archivo():
 
         # se agregan las cabeceras de las columnas
         df.columns = columnas
-        
+
         # Divide los valores por 100
         df[columnas_a_sumar] = df[columnas_a_sumar] / 100
     else:
@@ -56,6 +56,7 @@ columnas = [
 
 # Definir las columnas que deben sumarse
 columnas_a_sumar = columnas[5:]
+
 
 # funcion que ordena el DF por CUIL y suma los valores
 def consolidar_cuiles(df):
@@ -88,8 +89,9 @@ def consolidar_cuiles(df):
 
     # Agregar las filas consolidadas al DataFrame original
     df = pd.concat([df, df_consolidado], ignore_index=True)
-    
+
     return df
+
 
 df = cargar_archivo()
 
@@ -102,7 +104,7 @@ df_consolidado = consolidar_cuiles(ordenado)
 # se convierte el DataFrame a Excel
 nombre = datetime.datetime.now().microsecond
 df_consolidado.to_excel(
-    f"SALIDA/liq-{nombre}.xlsx",
+    f"liq-{nombre}.xlsx",
     sheet_name="hoja1",
     header=True,
     index=False,
