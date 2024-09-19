@@ -64,6 +64,7 @@ def cargar_archivo():
     archivo = filedialog.askopenfilename(filetypes=[("Archivos TXT", "*.txt")])
     df = pd.read_csv(archivo, sep=";", skipinitialspace=True, encoding="latin-1")
 
+    # ACÁ SE COLOCAN LOS CÓDIGOS DE TITULOS QUE SE DEBEN FILTRAR PARA REALIZAR LA COMPARACION
     df_filtrado = df[df["CODLIQ"].isin([206, 306])]
 
     # Definir columnas a extraer
@@ -110,7 +111,9 @@ try:
             "organismo_y": "cpe",
         }
     )
-    busca_duplicados = busca_duplicados.sort_values(["cuil","titulo sarha" ], ascending=[True, False])
+    busca_duplicados = busca_duplicados.sort_values(
+        ["cuil", "titulo sarha"], ascending=[True, False]
+    )
     crear_excel(busca_duplicados)
 
 except SQLAlchemyError as e:
