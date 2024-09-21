@@ -1,6 +1,7 @@
 import pandas as pd
 from datetime import datetime
 
+# este excel vacio lo rellena
 df_concepto_empleado = pd.read_excel("./CONCEPTO_EMPLEADO.xlsx", sheet_name="Sheet 1")
 
 
@@ -9,13 +10,13 @@ df_concepto_empleado = pd.read_excel("./CONCEPTO_EMPLEADO.xlsx", sheet_name="She
 # Variables globales
 cod_concepto = [8021, 8023, 8024, 8025, 8121, 8221, 8770, 8790, 8793]
 sub_concepto = "1"
-fecha_desde = "01/09/2024"
+fecha_desde = "1/9/2024"
 periodo_desde = "202409"
 reintegro = "8"
-fecha_hasta = "30/09/2024"
+fecha_hasta = "30/9/2024"
 cantidad = "1"
 transaccion = "210952"
-fecha_transaccion = "20/09/2024 12:00:00"
+fecha_transaccion = "9/21/2024"
 cod_tipo_unidad = "5"
 cod_unidad = "1"
 cod_usuario = "3633"
@@ -24,7 +25,7 @@ observacion = "GCIAS COBOL SEPTIEMBRE"
 generado_haberes = "1"
 
 # Leer el archivo Excel y limpiar las columnas innecesarias
-df = pd.read_excel("./LIQ-GCAS-SEPT.xlsx", sheet_name="hoja1")
+df = pd.read_excel("./liq-37630.xlsx", sheet_name="hoja1")
 df = df.drop(columns=["CUIT", "ORGANISMO", "LEGAJO", "AGENTE"])
 
 # Tupla de 13,555 CUILS
