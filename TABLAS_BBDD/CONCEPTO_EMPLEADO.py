@@ -1,0 +1,10 @@
+import pandas as pd
+from datetime import datetime
+from tkinter import filedialog
+import tkinter as tk
+
+# PROGRAMA QUE CARGA EN UN EXCEL LOS DATOS NECESARIOS PARA PARAMETRIZAR UN CONCEPTO PARA UNA ESTRUCTURA
+# SE DEBE DESCARGAR LA TABLA DESDE LA BBDD, SE COMPLETAN LOS DATOS NECESARIOS Y SE HACE UN INSERT.
+
+
+
