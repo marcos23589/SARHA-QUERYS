@@ -1,17 +1,19 @@
-import pandas as pd
+import os
+import shutil
+import subprocess
+import sys
+
+import openpyxl
 import oracledb
+import pandas as pd
 import sqlalchemy
 from sqlalchemy.exc import SQLAlchemyError
-import openpyxl
-import subprocess
-import shutil
-import os
-import sys
+
 sys.path.append(os.path.abspath('..'))
-from modulos import borra_directorio
-import modulos
 from dotenv import load_dotenv
 
+import modulos
+from modulos import borra_directorio
 
 # Cargar variables de entorno
 load_dotenv()
@@ -57,7 +59,7 @@ WHERE
     not (CODIGO352 = 0 and CODIGO353 = 0 and CODIGO354 = 0 and CODIGO355 = 0 and CODIGO356 = 0)
 """;
    ruta_origen="SALIDA"
-   ruta_destino="S:/LDDAT/SARHA/REPORTES/"
+   ruta_destino="S:/LDDAT/SARHA/DESCUENTOS/"
    
    # llamamos al modulo borra_directorio(funcion delete_directory) 
    borra_directorio.delete_directory(ruta_origen)
