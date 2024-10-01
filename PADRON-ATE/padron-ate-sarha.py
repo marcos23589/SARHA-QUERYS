@@ -34,6 +34,7 @@ FROM (
         el.apellido, 
         el.nombre,
         el.descripcion_sucursal as localidad,
+        cl.periodo_desde,
         sum(case when cl.cod_concepto = 488 then cl.valor else 0 end) as CODIGO488,
         sum(case when cl.cod_concepto = 489 then cl.valor else 0 end) as CODIGO489,
         sum(case when cl.cod_concepto = 490 then cl.valor else 0 end) as CODIGO490
@@ -51,7 +52,7 @@ FROM (
         and cl.nro_liquidacion = {numero_liquidacion}
         and el.no_paga is null
     
-     group by el.cuit, co.descripcion, cl.cuil, el.apellido, el.nombre, el.descripcion_sucursal
+     group by el.cuit, co.descripcion, cl.cuil, el.apellido, el.nombre, el.descripcion_sucursal, cl.periodo_desde
      )
 WHERE 
     not (CODIGO488 = 0 and CODIGO489 = 0 and CODIGO490 = 0)
