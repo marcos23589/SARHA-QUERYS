@@ -65,7 +65,7 @@ WHERE
    # CREA EL DATAFRAME DE EMBARGOS DE LA CONSULTA SQL
    df_vertical = pd.read_sql(embargos_sql, engine)
        
-   df_vertical.to_excel(f'./SALIDA/PADRON-ATE.xlsx', index=False)
+   df_vertical.to_excel(f'./SALIDA/SARHA-PADRON-ATE.xlsx', index=False)
       
    #Copio archivos a la carpeta del servidor   
    shutil.copytree(ruta_origen, ruta_destino, dirs_exist_ok=True)
