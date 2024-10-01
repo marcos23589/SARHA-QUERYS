@@ -24,7 +24,7 @@ numero_liquidacion = int(input('Ingrese el numero de liquidacion: '))
 try:
    # CONECTA CON LA BBDD ORACLE DE SARHA
    engine = sqlalchemy.create_engine(os.getenv('USUARIO_ORACLE'))
-   # EJECUTA LA QUERY PARA OBTENER LOS DESCUENTOS DEL 4% y 6,4%
+   # EJECUTA LA QUERY PARA OBTENER LOS AFILIADOS DE ATE CON SU RESPECTIVA LOCALIDAD
    embargos_sql = f"""SELECT * 
 FROM (
     SELECT 
