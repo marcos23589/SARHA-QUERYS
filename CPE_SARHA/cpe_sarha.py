@@ -34,7 +34,8 @@ consulta = f"""
         el.NRO_DOCUMENTO as DNI,         
         el.apellido || ', ' || el.nombre as NOMBRE_COMPLETO,         
         cl.descripcion_subconcepto as TITULO,
-        el.abreviatura as ORGANISMO
+        el.abreviatura as ORGANISMO,
+        cl.valor_bruto as SARHA
     FROM 
         sarha.concepto_liquidacion cl,
         sarha.empleado_liquidacion el
@@ -43,8 +44,9 @@ consulta = f"""
         and el.cuil = cl.cuil
         and cl.nro_liquidacion = {numero_liquidacion}
         and cl.cod_concepto = 18
+        and cl.cod_subconcepto not in (009, 010, 011, 012, 013, 014, 015, 017, 049, 9999)
     group by 
-        el.nro_liquidacion, cl.cuil, el.apellido, el.nombre, el.abreviatura, cl.descripcion_subconcepto, el.NRO_DOCUMENTO
+        el.nro_liquidacion, cl.cuil, el.apellido, el.nombre, el.abreviatura, cl.descripcion_subconcepto, el.NRO_DOCUMENTO, cl.valor_bruto
     """
 ruta_origen = "SALIDA"
 
@@ -65,8 +67,8 @@ def carga_df(engine):
 
 # SE GUARDA EL EXCEL
 def crear_excel(df):
-    df_sin_duplicados = df.drop_duplicates(subset='dni', keep='first')
-    df = df_sin_duplicados.sort_values(by = 'Organismo SARHA')
+#    df_sin_duplicados = df.drop_duplicates(subset='dni', keep='first')
+#    df = df_sin_duplicados.sort_values(by = 'Organismo SARHA')
     df.to_excel(
         f'./SALIDA/SARHA_CPE_{datetime.now().strftime("%H-%M-%S")}.xlsx', index=False
     )
@@ -81,7 +83,7 @@ def cargar_archivo():
     df_filtrado = df[df["CODLIQ"].isin([206, 306])]
 
     # Definir columnas a extraer
-    columnas = ["NDOLIQ", "NOMLIQ", "CODLIQ"]
+    columnas = ["NDOLIQ", "NOMLIQ", "CODLIQ", "IMPLIQ"]
 
     # Inicializar un DataFrame vacío
     cpe_df = pd.DataFrame()
@@ -98,10 +100,10 @@ def cargar_archivo():
             print(f"Columna {columna} no encontrada en el archivo.")
 
     cpe_df = cpe_df.rename(
-        columns={"NDOLIQ": "dni", "NOMLIQ": "nombre_completo", "CODLIQ": "titulo"}
+        columns={"NDOLIQ": "dni", "NOMLIQ": "nombre_completo", "CODLIQ": "titulo", "IMPLIQ": "CPE"}
     )
 
-    cpe_df["organismo"] = "CPE"
+    #cpe_df["organismo"] = "CPE"
     return cpe_df
 
 
@@ -112,7 +114,7 @@ try:
     df_sarha = carga_df(engine)
     df_cpe = cargar_archivo()
 
-    busca_duplicados = pd.merge(df_sarha, df_cpe, on="dni", how="inner")
+    busca_duplicados = pd.merge(df_sarha, df_cpe, on="dni", how="inner", validate='many_to_many')
     del busca_duplicados["nombre_completo_y"]
 
     busca_duplicados = busca_duplicados.rename(
@@ -121,7 +123,7 @@ try:
             "titulo_x": "titulo sarha",
             "organismo_x": "Organismo SARHA",
             "titulo_y": "cod titulo cpe",
-            "organismo_y": "cpe",
+            #"organismo_y": "cpe",
         }
     )
     busca_duplicados = busca_duplicados.sort_values(
