@@ -107,7 +107,7 @@ def cargar_archivo():
 
 try:
     # CONECTA CON LA BBDD ORACLE DE SARHA
-    engine = sqlalchemy.create_engine(os.getenv("BBDD_AFIP"))
+    engine = sqlalchemy.create_engine(os.getenv("USUARIO_ORACLE"))
     print("conexion exitosa")
     df_sarha = carga_df(engine)
     df_cpe = cargar_archivo()
