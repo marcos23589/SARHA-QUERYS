@@ -4,7 +4,7 @@ from datetime import datetime
 import pandas as pd
 import sqlalchemy
 from sqlalchemy.exc import SQLAlchemyError
-from tkinter import filedialog
+from tkinter import filedialog, Tk, simpledialog  # Importar el diálogo de entrada
 
 sys.path.append(os.path.abspath(".."))
 from dotenv import load_dotenv
@@ -13,15 +13,25 @@ from modulos import borra_directorio
 # Cargar variables de entorno
 load_dotenv()
 
+# Ocultar la ventana principal de tkinter
+root = Tk()
+root.withdraw()
+
 # ESTE PROGRAMA TOMA EL ARCHIVO TXT DE LA LIQUIDACION DE CPE, Y EN BASE A LA LIQUIDACION DE SARHA, COMPARA CON LOS DNI QUE AGENTES COBRAN TITULO EN LOS 2 SISTEMAS.
 
 # Ingresar numero de liquidacion de SAHRA
-numero_liquidacion = 13238
+numero_liquidacion = simpledialog.askinteger("Entrada", "Ingresa el número de liquidación:")
+
+# Verifica si el número de liquidación fue ingresado
+if numero_liquidacion is None:
+    print("No se ingresó un número de liquidación.")
+    sys.exit()  # Termina la ejecución si no se ingresó el número
+
 
 consulta = f""" 
     SELECT 
         cl.cuil,
-        substr(cl.cuil, 3, 8) as DNI,         
+        el.NRO_DOCUMENTO as DNI,         
         el.apellido || ', ' || el.nombre as NOMBRE_COMPLETO,         
         cl.descripcion_subconcepto as TITULO,
         el.abreviatura as ORGANISMO
@@ -33,7 +43,8 @@ consulta = f"""
         and el.cuil = cl.cuil
         and cl.nro_liquidacion = {numero_liquidacion}
         and cl.cod_concepto = 18
-    group by el.nro_liquidacion, cl.cuil, el.apellido, el.nombre, el.abreviatura, cl.descripcion_subconcepto
+    group by 
+        el.nro_liquidacion, cl.cuil, el.apellido, el.nombre, el.abreviatura, cl.descripcion_subconcepto, el.NRO_DOCUMENTO
     """
 ruta_origen = "SALIDA"
 
@@ -54,12 +65,14 @@ def carga_df(engine):
 
 # SE GUARDA EL EXCEL
 def crear_excel(df):
+    df_sin_duplicados = df.drop_duplicates(subset='dni', keep='first')
+    df = df_sin_duplicados.sort_values(by = 'Organismo SARHA')
     df.to_excel(
         f'./SALIDA/SARHA_CPE_{datetime.now().strftime("%H-%M-%S")}.xlsx', index=False
     )
 
 
-# cuadro de carga del archivo de CPE
+# cuadro de carga del archivo TXT de CPE
 def cargar_archivo():
     archivo = filedialog.askopenfilename(filetypes=[("Archivos TXT", "*.txt")])
     df = pd.read_csv(archivo, sep=";", skipinitialspace=True, encoding="latin-1")
