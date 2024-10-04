@@ -27,7 +27,7 @@ if numero_liquidacion is None:
     print("No se ingresó un número de liquidación.")
     sys.exit()  # Termina la ejecución si no se ingresó el número
 
-
+# QUERY QUE SE REALIZA PARA CREAR EL DF DE SARHA
 consulta = f""" 
     SELECT 
         cl.cuil,
@@ -44,7 +44,9 @@ consulta = f"""
         and el.cuil = cl.cuil
         and cl.nro_liquidacion = {numero_liquidacion}
         and cl.cod_concepto = 18
-        and cl.cod_subconcepto not in (009, 010, 011, 012, 013, 014, 015, 017, 049, 9999)
+-- estos subconceptos corresponden a TITULO AS SECUNDARIO, TITULO AS TERCIARIO, ETC. 
+--        and cl.cod_subconcepto not in (009, 010, 011, 012, 013, 014, 015, 017, 049, 9999)
+        and cl.cod_subconcepto not in (9999)
     group by 
         el.nro_liquidacion, cl.cuil, el.apellido, el.nombre, el.abreviatura, cl.descripcion_subconcepto, el.NRO_DOCUMENTO, cl.valor_bruto
     """
@@ -65,21 +67,22 @@ def carga_df(engine):
     return df_vertical
 
 
-# SE GUARDA EL EXCEL
+# FUNCION QUE CREA EL EXCEL
 def crear_excel(df):
 #    df_sin_duplicados = df.drop_duplicates(subset='dni', keep='first')
 #    df = df_sin_duplicados.sort_values(by = 'Organismo SARHA')
+    
     df.to_excel(
         f'./SALIDA/SARHA_CPE_{datetime.now().strftime("%H-%M-%S")}.xlsx', index=False
     )
 
 
-# cuadro de carga del archivo TXT de CPE
+# FUNCION QUE CREA EL CUADRO DE CARGA DEL ARCHIVO TXT DEL CPE
 def cargar_archivo():
     archivo = filedialog.askopenfilename(filetypes=[("Archivos TXT", "*.txt")])
     df = pd.read_csv(archivo, sep=";", skipinitialspace=True, encoding="latin-1")
 
-    # ACÁ SE COLOCAN LOS CÓDIGOS DE TITULOS QUE SE DEBEN FILTRAR PARA REALIZAR LA COMPARACION
+    # ACÁ SE COLOCAN LOS CÓDIGOS DE TITULOS DEL CPE QUE SE DEBEN FILTRAR PARA REALIZAR LA COMPARACION
     df_filtrado = df[df["CODLIQ"].isin([206, 306])]
 
     # Definir columnas a extraer
@@ -100,36 +103,66 @@ def cargar_archivo():
             print(f"Columna {columna} no encontrada en el archivo.")
 
     cpe_df = cpe_df.rename(
-        columns={"NDOLIQ": "dni", "NOMLIQ": "nombre_completo", "CODLIQ": "titulo", "IMPLIQ": "CPE"}
+        columns={"NDOLIQ": "dni", 
+                 "NOMLIQ": "nombre_completo", 
+                 "CODLIQ": "titulo", 
+                 "IMPLIQ": "CPE"}
     )
 
-    #cpe_df["organismo"] = "CPE"
+    #RETORNA EL DF DEL CPE
     return cpe_df
 
 
+# FUNCION QUE TOMA LOS VALORES DE BRUTO DE SARHA Y CPE, Y LOS COMPARA PARA RELLENAR LA COLUMNA "MAYOR"
+def montos(df):
+        # SE ITERA SOBRE TODAS LAS FILAS DEL DF Y SE COMPARAN LOS VALORES DE SARHA Y CPE
+        for i in df.index:
+            if(df.loc[i, "sarha"] < df.loc[i, "CPE"]):
+                df.loc[i, "MAYOR"] = "CPE"
+            else:
+                df.loc[i, "MAYOR"] = "SARHA"
+        
+        return df 
+
+# ---------------------------- ACÁ COMIENZA LA EJECUCION DEL PROGRAMA ----------------------------
 try:
     # CONECTA CON LA BBDD ORACLE DE SARHA
     engine = sqlalchemy.create_engine(os.getenv("USUARIO_ORACLE"))
     print("conexion exitosa")
+
+    # SE CREA EL DF DE SARHA
     df_sarha = carga_df(engine)
+
+    # SE CREA EL DF DEL ARCHIVO DE CPE
     df_cpe = cargar_archivo()
 
-    busca_duplicados = pd.merge(df_sarha, df_cpe, on="dni", how="inner", validate='many_to_many')
-    del busca_duplicados["nombre_completo_y"]
+    # UNE LOS DF 
+    df_merge = pd.merge(df_sarha, df_cpe, on="dni", how="inner", validate='many_to_many')
+    del df_merge["nombre_completo_y"]
 
-    busca_duplicados = busca_duplicados.rename(
+    # SE RENOMBRAN LAS COLUMNAS
+    df_merge = df_merge.rename(
         columns={
             "nombre_completo_x": "agente",
             "titulo_x": "titulo sarha",
             "organismo_x": "Organismo SARHA",
             "titulo_y": "cod titulo cpe",
-            #"organismo_y": "cpe",
         }
     )
-    busca_duplicados = busca_duplicados.sort_values(
-        ["cuil", "titulo sarha"], ascending=[True, False]
-    )
-    crear_excel(busca_duplicados)
 
+    # SE ORDENA EL DF POR "ORGANISMO"
+    df_merge = df_merge.sort_values(
+        ["organismo", "cuil"], ascending=[True, True]
+    )
+
+    # SE DEFINE DONDE COBRA MAS
+    df = montos(df_merge)
+
+    # SE CREA EL EXCEL FINAL
+    crear_excel(df)
+
+# SE CAPTURA LA EXCEPCION EN CASO DE ERROR    
 except SQLAlchemyError as e:
     print(e)
+
+# ---------------------------- ACÁ FINALIZA LA EJECUCION DEL PROGRAMA ----------------------------
