@@ -10,18 +10,18 @@ df_concepto_empleado = pd.read_excel("./CONCEPTO_EMPLEADO.xlsx", sheet_name="She
 # Variables globales
 cod_concepto = [8021, 8023, 8024, 8025, 8121, 8221, 8770, 8790, 8793]
 sub_concepto = "1"
-fecha_desde = "1/9/2024"
-periodo_desde = "202409"
+fecha_desde = "1/10/2024"
+periodo_desde = "202410"
 reintegro = "8"
-fecha_hasta = "30/9/2024"
+fecha_hasta = "31/10/2024"
 cantidad = "1"
 transaccion = "210952"
-fecha_transaccion = "9/21/2024"
+fecha_transaccion = "10/7/2024"
 cod_tipo_unidad = "5"
 cod_unidad = "1"
 cod_usuario = "3633"
 cod_convenio = "1"
-observacion = "GCIAS COBOL SEPTIEMBRE"
+observacion = "GCIAS COBOL COMPLE"
 generado_haberes = "1"
 
 # Leer el archivo Excel y limpiar las columnas innecesarias
@@ -109,7 +109,7 @@ df = df_2[df_2['IMPORTE_GEN_HAB'] != 0]
 # SE GUARDA EL EXCEL
 def crear_excel(df):
     df.to_excel(
-        f'./COBOL_GCIAS_{datetime.now().strftime("%H-%M-%S")}.xlsx', index=False
+        f'./SALIDA-COBOL/COBOL_GCIAS_{datetime.now().strftime("%H-%M-%S")}.xlsx', index=False
     )
 
 
