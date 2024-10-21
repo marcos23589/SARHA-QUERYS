@@ -8,7 +8,17 @@ df_concepto_empleado = pd.read_excel("./CONCEPTO_EMPLEADO.xlsx", sheet_name="She
 # SE TOMA LA LIQUIDACION DE COBOL Y SE GENERA UN EXCEL
 
 # Variables globales
-cod_concepto = [8021, 8023, 8024, 8025, 8121, 8221, 8770, 8790, 8793]
+cod_concepto = [
+    8021,  # BRUTO GRAVADO
+    8023,  # ASIGNACIONES
+    8770,  # HS EXTRAS
+    8121,  # SAC
+    8221,  # 12% REMUNERATIVO
+    8024,  # JUBILACION (CPS)
+    8025,  # OB.SOCIAL (CSS)
+    8790,  # SINDICATOS/GREMIOS
+    8793,  # ISPRO
+]
 sub_concepto = "1"
 fecha_desde = "10/1/2024"
 periodo_desde = "202410"
