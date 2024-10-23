@@ -1,5 +1,6 @@
 import pandas as pd
 from datetime import datetime
+from tkinter import filedialog
 
 # este excel vacio lo rellena
 df_concepto_empleado = pd.read_excel("./CONCEPTO_EMPLEADO.xlsx", sheet_name="Sheet 1")
@@ -20,27 +21,28 @@ cod_concepto = [
     8793,  # ISPRO
 ]
 sub_concepto = "1"
-fecha_desde = "10/1/2024"
-periodo_desde = "202410"
+fecha_desde = "10/1/2024"   #MODICAR SEGÚN MES DE LIQUIDACION "MM/DD/AAAA"
+periodo_desde = "202410"    ##MODICAR SEGÚN PERÍODO DE LIQUIDACION
 reintegro = "8"
-fecha_hasta = "31/10/2024"
+fecha_hasta = "31/10/2024"  #MODICAR SEGÚN MES DE LIQUIDACION "DD/MM/AAAA"
 cantidad = "1"
-transaccion = "210953"
-fecha_transaccion = "10/18/2024"  # REVISAR FORMATO DE FECHA EN SQL DEVELOPER
+transaccion = "210953"      #MODICAR SEGÚN ÚLTIMA TRANSACCION REVISADA EN LA BBDD
+fecha_transaccion = "22/10/2024"  #MODICAR SEGÚN DÍA DE GENERACION DE LIQUIDACION "DD/MM/AAAA"
 cod_tipo_unidad = "5"
 cod_unidad = "1"
-cod_usuario = "3633"
+cod_usuario = "3633"    #MODICAR SEGÚN CODIGO DE USUARIO
 cod_convenio = "1"
-observacion = "GCIAS_OCT_TEST "
+observacion = "GCIAS COBOL OCTUBRE" #MODICAR LEYENDA
 generado_haberes = "1"
 
+
 # Leer el archivo Excel y limpiar las columnas innecesarias
-df = pd.read_excel("./liq-400753.xlsx", sheet_name="hoja1")
+archivo = filedialog.askopenfilename()
+df = pd.read_excel(archivo, sheet_name="hoja1")
 df = df.drop(columns=["CUIT", "ORGANISMO", "LEGAJO", "AGENTE"])
 
-# Tupla de 13,555 CUILS
+# Tupla de CUILES
 cuiles = tuple(df.pop("CUIL"))
-
 
 # Función transpuesta optimizada
 def transpuesta():
