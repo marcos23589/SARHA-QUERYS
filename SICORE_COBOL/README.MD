@@ -1,3 +1,5 @@
+TIENE QUE ESTAR GENERADA LA INTERFAZ SICORE EN EL APLICATIVO DE SARHA PARA OBTENER LOS ARCHIVOS.
+
 Función generar_archivo: 
 Esta función permite crear tanto los archivos de RETENCIONES como SUJETOS en una sola definición de función.
 
