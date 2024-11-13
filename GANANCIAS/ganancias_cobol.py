@@ -1,5 +1,6 @@
 import pandas as pd
 from datetime import datetime
+from tkinter import filedialog
 
 # este excel vacio lo rellena
 df_concepto_empleado = pd.read_excel("./CONCEPTO_EMPLEADO.xlsx", sheet_name="Sheet 1")
@@ -8,29 +9,40 @@ df_concepto_empleado = pd.read_excel("./CONCEPTO_EMPLEADO.xlsx", sheet_name="She
 # SE TOMA LA LIQUIDACION DE COBOL Y SE GENERA UN EXCEL
 
 # Variables globales
-cod_concepto = [8021, 8023, 8024, 8025, 8121, 8221, 8770, 8790, 8793]
+cod_concepto = [
+    8021,  # BRUTO GRAVADO
+    8023,  # ASIGNACIONES
+    8770,  # HS EXTRAS
+    8121,  # SAC
+    8221,  # 12% REMUNERATIVO
+    8024,  # JUBILACION (CPS)
+    8025,  # OB.SOCIAL (CSS)
+    8790,  # SINDICATOS/GREMIOS
+    8793,  # ISPRO
+]
 sub_concepto = "1"
-fecha_desde = "1/9/2024"
-periodo_desde = "202409"
+fecha_desde = "10/1/2024"   #MODICAR SEGÚN MES DE LIQUIDACION "MM/DD/AAAA"
+periodo_desde = "202410"    ##MODICAR SEGÚN PERÍODO DE LIQUIDACION
 reintegro = "8"
-fecha_hasta = "30/9/2024"
+fecha_hasta = "31/10/2024"  #MODICAR SEGÚN MES DE LIQUIDACION "DD/MM/AAAA"
 cantidad = "1"
-transaccion = "210952"
-fecha_transaccion = "9/21/2024"
+transaccion = "210953"      #MODICAR SEGÚN ÚLTIMA TRANSACCION REVISADA EN LA BBDD
+fecha_transaccion = "22/10/2024"  #MODICAR SEGÚN DÍA DE GENERACION DE LIQUIDACION "DD/MM/AAAA"
 cod_tipo_unidad = "5"
 cod_unidad = "1"
-cod_usuario = "3633"
+cod_usuario = "3633"    #MODICAR SEGÚN CODIGO DE USUARIO
 cod_convenio = "1"
-observacion = "GCIAS COBOL SEPTIEMBRE"
+observacion = "GCIAS COBOL OCTUBRE" #MODICAR LEYENDA
 generado_haberes = "1"
 
+
 # Leer el archivo Excel y limpiar las columnas innecesarias
-df = pd.read_excel("./liq-37630.xlsx", sheet_name="hoja1")
+archivo = filedialog.askopenfilename()
+df = pd.read_excel(archivo, sheet_name="hoja1")
 df = df.drop(columns=["CUIT", "ORGANISMO", "LEGAJO", "AGENTE"])
 
-# Tupla de 13,555 CUILS
+# Tupla de CUILES
 cuiles = tuple(df.pop("CUIL"))
-
 
 # Función transpuesta optimizada
 def transpuesta():
@@ -103,13 +115,14 @@ df_2 = transpuesta()
 df_2["IMPORTE_GEN_HAB"] = columna_unica
 
 # Eliminar las filas donde 'IMPORTE_GEN_HAB' es igual a 0
-df = df_2[df_2['IMPORTE_GEN_HAB'] != 0]
+df = df_2[df_2["IMPORTE_GEN_HAB"] != 0]
 
 
 # SE GUARDA EL EXCEL
 def crear_excel(df):
     df.to_excel(
-        f'./COBOL_GCIAS_{datetime.now().strftime("%H-%M-%S")}.xlsx', index=False
+        f'./SALIDA-COBOL/COBOL_GCIAS_{datetime.now().strftime("%H-%M-%S")}.xlsx',
+        index=False,
     )
 
 

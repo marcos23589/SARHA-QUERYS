@@ -11,9 +11,9 @@ from pathlib import Path
 def cargar_archivo():
     archivo = filedialog.askopenfilename(
         filetypes=[
-            ("Archivos XLSX", "*.xlsx"),
-            ("Archivos XLS", "*.xls"),
             ("Archivos TXT", "*.txt"),
+            ("Archivos XLS", "*.xls"),
+            ("Archivos XLSX", "*.xlsx"),
         ]
     )
 
