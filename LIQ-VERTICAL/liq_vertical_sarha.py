@@ -25,7 +25,7 @@ try:
     # CONECTA CON LA BBDD ORACLE DE SARHA
     engine = sqlalchemy.create_engine(os.getenv("USUARIO_ORACLE"))
     # EJECUTA LA QUERY PARA OBTENER LIQUIDACION VERTICAL
-    embargos_sql = f"""SELECT 
+    embargos_sql = f"""SELECT
 el.nro_liquidacion,
     el.cuit,
     c.descripcion,
@@ -79,7 +79,7 @@ order by
     # CREA EL DATAFRAME DE EMBARGOS DE LA CONSULTA SQL
     df_vertical = pd.read_sql(embargos_sql, engine)
 
-    df_vertical.to_excel(f"SALIDA\LIQ-VERTICAL-{numero_liquidacion}.xlsx", index=False)
+    df_vertical.to_excel(f"SALIDA\\LIQ-VERTICAL-{numero_liquidacion}.xlsx", index=False)
 
     # Copio archivos a la carpeta del servidor
     shutil.copytree(ruta_origen, ruta_destino, dirs_exist_ok=True)
