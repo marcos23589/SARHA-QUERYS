@@ -34,23 +34,27 @@ el.nro_liquidacion,
     el.apellido || ', ' || el.nombre as nombre_completo,
     el.descripcion_escalafon,
     el.descripcion_funcion,
+    con.descripcion as convenio,    
     cl.cod_concepto,
     cl.descripcion_concepto,
     cl.cod_subconcepto,
     co.remunerativo_recibo,
     cl.descripcion_subconcepto,
     cl.valor
+
     
 from 
     sarha.concepto_liquidacion cl,
     sarha.empleado_liquidacion el,
     sarha.cuit_organismo c,
-    sarha.concepto co
+    sarha.concepto co,
+    sarha.convenio con
 
 where 
     cl.nro_liquidacion = {numero_liquidacion}
     and el.cuit = c.cuit
     and el.cuil = cl.cuil
+    and cl.cod_convenio = con.cod_convenio
     and el.nro_liquidacion = cl.nro_liquidacion
     and el.no_paga is NULL
     and cl.cod_concepto in (select co.cod_concepto from sarha.concepto where co.remunerativo_recibo in (1,2) )
