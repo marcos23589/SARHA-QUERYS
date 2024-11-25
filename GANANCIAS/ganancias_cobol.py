@@ -122,7 +122,7 @@ df = df_2[df_2["IMPORTE_GEN_HAB"] != 0]
 # SE GUARDA EL EXCEL
 def crear_excel(df):
     df.to_excel(
-        f'./SALIDA-COBOL/COBOL_GCIAS_{datetime.now().strftime("%H-%M-%S")}.xlsx',
+        f'./SALIDA-COBOL/COBOL_BBDD_COMPLE_{datetime.now().strftime("%H-%M-%S")}.xlsx',
         index=False,
     )
 
