@@ -1,12 +1,10 @@
+import os
+import shutil
+import subprocess
+
 import pandas as pd
 import sqlalchemy
 from sqlalchemy.exc import SQLAlchemyError
-import openpyxl
-import subprocess
-import shutil
-import os
-import oracledb
-
 
 ### --- Dicccionario con denominaciones estandar para archivos
 dict_denominaciones = {

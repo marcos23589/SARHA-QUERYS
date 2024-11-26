@@ -1,16 +1,12 @@
 import os
 import shutil
-import subprocess
 import sys
 
-import openpyxl
-import oracledb
 import pandas as pd
 import sqlalchemy
 from dotenv import load_dotenv
 from sqlalchemy.exc import SQLAlchemyError
 
-import modulos
 from modulos import borra_directorio
 
 sys.path.append(os.path.abspath('..'))
@@ -101,7 +97,8 @@ try:
         contador += 1
         print(f"Procesado organismo: {organismo}")
         df1 = df_embargos[df_embargos['organismo'] == organismo]
-        df1.to_excel(F'./SALIDA/EMBARGOS-{dict_denominaciones.get(organismo)}.xlsx', index=False)
+        df1.to_excel(
+            F'./SALIDA/EMBARGOS-{dict_denominaciones.get(organismo)}.xlsx', index=False)
 
     # Verifico la cantidad de organismos
     if contador > 0:
