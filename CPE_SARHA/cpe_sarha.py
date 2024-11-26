@@ -1,14 +1,17 @@
 import os
 import sys
 from datetime import datetime
+from tkinter import (Tk, filedialog,  # Importar el diálogo de entrada
+                     simpledialog)
+
 import pandas as pd
 import sqlalchemy
+from dotenv import load_dotenv
 from sqlalchemy.exc import SQLAlchemyError
-from tkinter import filedialog, Tk, simpledialog  # Importar el diálogo de entrada
+
+from modulos import borra_directorio
 
 sys.path.append(os.path.abspath(".."))
-from dotenv import load_dotenv
-from modulos import borra_directorio
 
 # Cargar variables de entorno
 load_dotenv()
@@ -20,7 +23,8 @@ root.withdraw()
 # ESTE PROGRAMA TOMA EL ARCHIVO TXT DE LA LIQUIDACION DE CPE, Y EN BASE A LA LIQUIDACION DE SARHA, COMPARA CON LOS DNI QUE AGENTES COBRAN TITULO EN LOS 2 SISTEMAS.
 
 # Ingresar numero de liquidacion de SAHRA
-numero_liquidacion = simpledialog.askinteger("Entrada", "Ingresa el número de liquidación:")
+numero_liquidacion = simpledialog.askinteger(
+    "Entrada", "Ingresa el número de liquidación:")
 
 # Verifica si el número de liquidación fue ingresado
 if numero_liquidacion is None:
@@ -28,26 +32,26 @@ if numero_liquidacion is None:
     sys.exit()  # Termina la ejecución si no se ingresó el número
 
 # QUERY QUE SE REALIZA PARA CREAR EL DF DE SARHA
-consulta = f""" 
-    SELECT 
+consulta = f"""
+    SELECT
         cl.cuil,
-        el.NRO_DOCUMENTO as DNI,         
-        el.apellido || ', ' || el.nombre as NOMBRE_COMPLETO,         
+        el.NRO_DOCUMENTO as DNI,
+        el.apellido || ', ' || el.nombre as NOMBRE_COMPLETO,
         cl.descripcion_subconcepto as TITULO,
         el.abreviatura as ORGANISMO,
         cl.valor_bruto as SARHA
-    FROM 
+    FROM
         sarha.concepto_liquidacion cl,
         sarha.empleado_liquidacion el
-    where 
+    where
         el.nro_liquidacion = cl.nro_liquidacion
         and el.cuil = cl.cuil
         and cl.nro_liquidacion = {numero_liquidacion}
         and cl.cod_concepto = 18
--- estos subconceptos corresponden a TITULO AS SECUNDARIO, TITULO AS TERCIARIO, ETC. 
+-- estos subconceptos corresponden a TITULO AS SECUNDARIO, TITULO AS TERCIARIO, ETC.
 --        and cl.cod_subconcepto not in (009, 010, 011, 012, 013, 014, 015, 017, 049, 9999)
         and cl.cod_subconcepto not in (9999)
-    group by 
+    group by
         el.nro_liquidacion, cl.cuil, el.apellido, el.nombre, el.abreviatura, cl.descripcion_subconcepto, el.NRO_DOCUMENTO, cl.valor_bruto
     """
 ruta_origen = "SALIDA"
@@ -69,9 +73,9 @@ def carga_df(engine):
 
 # FUNCION QUE CREA EL EXCEL
 def crear_excel(df):
-#    df_sin_duplicados = df.drop_duplicates(subset='dni', keep='first')
-#    df = df_sin_duplicados.sort_values(by = 'Organismo SARHA')
-    
+    #    df_sin_duplicados = df.drop_duplicates(subset='dni', keep='first')
+    #    df = df_sin_duplicados.sort_values(by = 'Organismo SARHA')
+
     df.to_excel(
         f'./SALIDA/SARHA_CPE_{datetime.now().strftime("%H-%M-%S")}.xlsx', index=False
     )
@@ -80,7 +84,8 @@ def crear_excel(df):
 # FUNCION QUE CREA EL CUADRO DE CARGA DEL ARCHIVO TXT DEL CPE
 def cargar_archivo():
     archivo = filedialog.askopenfilename(filetypes=[("Archivos TXT", "*.txt")])
-    df = pd.read_csv(archivo, sep=";", skipinitialspace=True, encoding="latin-1")
+    df = pd.read_csv(archivo, sep=";", skipinitialspace=True,
+                     encoding="latin-1")
 
     # ACÁ SE COLOCAN LOS CÓDIGOS DE TITULOS DEL CPE QUE SE DEBEN FILTRAR PARA REALIZAR LA COMPARACION
     df_filtrado = df[df["CODLIQ"].isin([206, 306])]
@@ -103,26 +108,27 @@ def cargar_archivo():
             print(f"Columna {columna} no encontrada en el archivo.")
 
     cpe_df = cpe_df.rename(
-        columns={"NDOLIQ": "dni", 
-                 "NOMLIQ": "nombre_completo", 
-                 "CODLIQ": "titulo", 
+        columns={"NDOLIQ": "dni",
+                 "NOMLIQ": "nombre_completo",
+                 "CODLIQ": "titulo",
                  "IMPLIQ": "CPE"}
     )
 
-    #RETORNA EL DF DEL CPE
+    # RETORNA EL DF DEL CPE
     return cpe_df
 
 
 # FUNCION QUE TOMA LOS VALORES DE BRUTO DE SARHA Y CPE, Y LOS COMPARA PARA RELLENAR LA COLUMNA "MAYOR"
 def montos(df):
-        # SE ITERA SOBRE TODAS LAS FILAS DEL DF Y SE COMPARAN LOS VALORES DE SARHA Y CPE
-        for i in df.index:
-            if(df.loc[i, "sarha"] < df.loc[i, "CPE"]):
-                df.loc[i, "MAYOR"] = "CPE"
-            else:
-                df.loc[i, "MAYOR"] = "SARHA"
-        
-        return df 
+    # SE ITERA SOBRE TODAS LAS FILAS DEL DF Y SE COMPARAN LOS VALORES DE SARHA Y CPE
+    for i in df.index:
+        if (df.loc[i, "sarha"] < df.loc[i, "CPE"]):
+            df.loc[i, "MAYOR"] = "CPE"
+        else:
+            df.loc[i, "MAYOR"] = "SARHA"
+
+    return df
+
 
 # ---------------------------- ACÁ COMIENZA LA EJECUCION DEL PROGRAMA ----------------------------
 try:
@@ -136,8 +142,9 @@ try:
     # SE CREA EL DF DEL ARCHIVO DE CPE
     df_cpe = cargar_archivo()
 
-    # UNE LOS DF 
-    df_merge = pd.merge(df_sarha, df_cpe, on="dni", how="inner", validate='many_to_many')
+    # UNE LOS DF
+    df_merge = pd.merge(df_sarha, df_cpe, on="dni",
+                        how="inner", validate='many_to_many')
     del df_merge["nombre_completo_y"]
 
     # SE RENOMBRAN LAS COLUMNAS
@@ -161,7 +168,7 @@ try:
     # SE CREA EL EXCEL FINAL
     crear_excel(df)
 
-# SE CAPTURA LA EXCEPCION EN CASO DE ERROR    
+# SE CAPTURA LA EXCEPCION EN CASO DE ERROR
 except SQLAlchemyError as e:
     print(e)
 
