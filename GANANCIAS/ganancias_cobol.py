@@ -21,13 +21,13 @@ cod_concepto = [
     8793,  # ISPRO
 ]
 sub_concepto = "1"
-fecha_desde = "11/1/2024"  # MODICAR SEGÚN MES DE LIQUIDACION "MM/DD/AAAA"
+fecha_desde = "11/2/2024"  # MODICAR SEGÚN MES DE LIQUIDACION "MM/DD/AAAA"
 periodo_desde = "202411"  ##MODICAR SEGÚN PERÍODO DE LIQUIDACION
 reintegro = "8"
 fecha_hasta = "30/11/2024"  # MODICAR SEGÚN MES DE LIQUIDACION "DD/MM/AAAA"
 cantidad = "1"
 transaccion = "210954"  # MODICAR SEGÚN ÚLTIMA TRANSACCION REVISADA EN LA BBDD
-fecha_transaccion = "20/11/2024"  # MODICAR SEGÚN DÍA DE GENERACION DE LIQUIDACION "DD/MM/AAAA"
+fecha_transaccion = "26/11/2024"  # MODICAR SEGÚN DÍA DE GENERACION DE LIQUIDACION "DD/MM/AAAA"
 cod_tipo_unidad = "5"
 cod_unidad = "1"
 cod_usuario = "3633"  # MODICAR SEGÚN CODIGO DE USUARIO
@@ -122,7 +122,7 @@ df = df_2[df_2["IMPORTE_GEN_HAB"] != 0]
 # SE GUARDA EL EXCEL
 def crear_excel(df):
     df.to_excel(
-        f'./SALIDA-COBOL/COBOL_BBDD_COMPLE_{datetime.now().strftime("%H-%M-%S")}.xlsx',
+        f'S:\LDDAT\GANANCIAS\BBDD\BBDD_COMPLE.xlsx',        
         index=False,
     )
 
