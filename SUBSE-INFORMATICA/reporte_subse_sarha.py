@@ -8,10 +8,8 @@ import sqlalchemy
 from dotenv import load_dotenv
 from sqlalchemy.exc import SQLAlchemyError
 
-from modulos import borra_directorio
-
 sys.path.append(os.path.abspath('..'))
-
+from modulos import borra_directorio
 
 warnings.filterwarnings("ignore", "\nPyarrow", DeprecationWarning)
 
