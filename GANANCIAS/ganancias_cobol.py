@@ -27,7 +27,9 @@ reintegro = "8"
 fecha_hasta = "30/11/2024"  # MODICAR SEGÚN MES DE LIQUIDACION "DD/MM/AAAA"
 cantidad = "1"
 transaccion = "210954"  # MODICAR SEGÚN ÚLTIMA TRANSACCION REVISADA EN LA BBDD
-fecha_transaccion = "26/11/2024"  # MODICAR SEGÚN DÍA DE GENERACION DE LIQUIDACION "DD/MM/AAAA"
+fecha_transaccion = (
+    "26/11/2024"  # MODICAR SEGÚN DÍA DE GENERACION DE LIQUIDACION "DD/MM/AAAA"
+)
 cod_tipo_unidad = "5"
 cod_unidad = "1"
 cod_usuario = "3633"  # MODICAR SEGÚN CODIGO DE USUARIO
@@ -122,7 +124,7 @@ df = df_2[df_2["IMPORTE_GEN_HAB"] != 0]
 # SE GUARDA EL EXCEL
 def crear_excel(df):
     df.to_excel(
-        f'S:\LDDAT\GANANCIAS\BBDD\BBDD_COMPLE.xlsx',        
+        f"S:\LDDAT\GANANCIAS\BBDD\BBDD_GCIAS.xlsx",
         index=False,
     )
 
