@@ -122,3 +122,6 @@ GitHub.sublime-settings
 *.xlsx
 *.doc
 *.docx
+
+# setup pep8
+setup.cfg

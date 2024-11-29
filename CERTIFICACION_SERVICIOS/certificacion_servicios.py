@@ -7,11 +7,8 @@ import sqlalchemy
 from dotenv import load_dotenv
 from sqlalchemy.exc import SQLAlchemyError
 
-import modulos
-from modulos import borra_directorio
-
 sys.path.append(os.path.abspath('..'))
-
+from modulos import borra_directorio
 
 # Cargar variables de entorno
 load_dotenv()
