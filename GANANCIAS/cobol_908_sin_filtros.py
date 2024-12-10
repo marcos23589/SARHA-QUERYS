@@ -63,7 +63,10 @@ try:
     # CREA EL DATAFRAME DE EMBARGOS DE LA CONSULTA SQL
     df_vertical = pd.read_sql(ganancias_sql, engine)
 
-    df_vertical.to_excel(f"S:\LDDAT\GANANCIAS\COBOL-{numero_liquidacion}-908.xlsx", index=False)
+    df_vertical.to_excel(
+        f"S:\LDDAT\GANANCIAS\OCT-CA-{numero_liquidacion}-908.xlsx",
+        index=False,
+        )
 
     # COPIA ARCHIVOS EXCEL A CARPETA EMBARGOS
     ruta_origen = "SALIDA"

@@ -21,20 +21,20 @@ cod_concepto = [
     8793,  # ISPRO
 ]
 sub_concepto = "1"
-fecha_desde = "11/1/2024"  # MODICAR SEGÚN MES DE LIQUIDACION "MM/DD/AAAA"
-periodo_desde = "202412"  ##MODICAR SEGÚN PERÍODO DE LIQUIDACION
+fecha_desde = "11/2/2024"  # MODICAR SEGÚN MES DE LIQUIDACION "MM/DD/AAAA"
+periodo_desde = "202411"  ##MODICAR SEGÚN PERÍODO DE LIQUIDACION
 reintegro = "8"
-fecha_hasta = "31/12/2024"  # MODICAR SEGÚN MES DE LIQUIDACION "DD/MM/AAAA"
+fecha_hasta = "30/10/2024"  # MODICAR SEGÚN MES DE LIQUIDACION "DD/MM/AAAA"
 cantidad = "1"
-transaccion = "210955"  # MODICAR SEGÚN ÚLTIMA TRANSACCION REVISADA EN LA BBDD
+transaccion = "210957"  # MODICAR SEGÚN ÚLTIMA TRANSACCION REVISADA EN LA BBDD
 fecha_transaccion = (
-    "04/12/2024"  # MODICAR SEGÚN DÍA DE GENERACION DE LIQUIDACION "DD/MM/AAAA"
+    "09/12/2024"  # MODICAR SEGÚN DÍA DE GENERACION DE LIQUIDACION "DD/MM/AAAA"
 )
 cod_tipo_unidad = "5"
 cod_unidad = "1"
 cod_usuario = "3633"  # MODICAR SEGÚN CODIGO DE USUARIO
 cod_convenio = "1"
-observacion = "GCIAS COMPLE SALUD NOVIEMBRE"  # MODICAR LEYENDA
+observacion = "GCIAS SALUD CA NOVIEMBRE"  # MODICAR LEYENDA
 generado_haberes = "1"
 
 
@@ -124,7 +124,7 @@ df = df_2[df_2["IMPORTE_GEN_HAB"] != 0]
 # SE GUARDA EL EXCEL
 def crear_excel(df):
     df.to_excel(
-        f"S:\LDDAT\GANANCIAS\COMPLE_SALUD_OCT.xlsx",
+        f"S:\LDDAT\GANANCIAS\COMPLE_SALUD_NOV_CA.xlsx",
         index=False,
     )
 
