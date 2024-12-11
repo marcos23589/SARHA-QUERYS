@@ -124,7 +124,7 @@ df = df_2[df_2["IMPORTE_GEN_HAB"] != 0]
 # SE GUARDA EL EXCEL
 def crear_excel(df):
     df.to_excel(
-        f"S:\LDDAT\GANANCIAS\COMPLE_SALUD_NOV_CA.xlsx",
+        f"S:\LDDAT\GANANCIAS\TEST.xlsx",
         index=False,
     )
 

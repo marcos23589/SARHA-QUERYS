@@ -104,7 +104,7 @@ df_consolidado = consolidar_cuiles(ordenado)
 # se convierte el DataFrame a Excel
 nombre = datetime.datetime.now().microsecond
 df_consolidado.to_excel(
-    f"./SALIDA-COBOL/liq-NOV-CA-{nombre}.xlsx",
+    f"./SALIDA-COBOL/liq-TEST.xlsx",
     sheet_name="hoja1",
     header=True,
     index=False,
