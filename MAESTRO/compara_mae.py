@@ -1,110 +1,219 @@
 import pandas as pd
 import re
+from tkinter import Tk
+from tkinter.filedialog import askopenfilename, asksaveasfilename
+
+# Constantes
+CABECERAS = [
+    "LEGAJO",
+    "NOMBRE",
+    "DNI",
+    "CUIL",
+    "ESTADO",
+    "MOTIVO-BAJA",
+    "FECHA-NAC",
+    "FECHA-BAJA",
+]
+MOTIVOS_BAJA = [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "F",
+    "P",
+    "X",
+]
+COLUMNAS_DESEADAS = [1, 11, 25, 26, 29, 30, 31, 198, 199, 200, 201, 202]
+CABECERAS_ORIGINALES = [
+    "LEGAJO",
+    "NOMBRE",
+    "DNI",
+    "CUIL",
+    "DIA-NAC",
+    "MES-NAC",
+    "ANIO-NAC",
+    "ESTADO",
+    "DIA-BAJA",
+    "MES-BAJA",
+    "ANIO-BAJA",
+    "MOTIVO-BAJA",
+]
 
 
 # Función para limpiar caracteres ilegales
 def clean_text(text):
     if isinstance(text, str):
-        # Eliminar caracteres ilegales
         return re.sub(r"[\x00-\x1F\x7F-\x9F]", "", text)
     return text
 
 
-archivo1 = "./MAESTRO-11.TXT"
-archivo2 = "./MAESTRO-12.TXT"
-
-cabeceras2 = [
-        'LEGAJO',
-        'NOMBRE',
-        'DNI',
-        'CUIL',
-        'ESTADO',
-        'MOTIVO-BAJA',
-        'FECHA-NAC',
-        'FECHA-BAJA',
-    ]
-
-def converse(df):    
-    # Leer el archivo TXT, ignorando líneas problemáticas
+# Función para procesar un archivo y devolver un DataFrame procesado
+def process_file(file_path):
     chunks = pd.read_csv(
-        df, sep=";", encoding="latin-1", chunksize=1000, on_bad_lines="skip", header=None
+        file_path,
+        sep=";",
+        encoding="latin-1",
+        chunksize=1000,
+        on_bad_lines="skip",
+        header=None,
     )
 
-    # Limpiar cada fragmento
     cleaned_chunks = []
     for chunk in chunks:
-        # Aplicar la limpieza a cada columna del DataFrame
         cleaned_chunk = chunk.apply(
             lambda col: col.map(clean_text) if col.dtype == "object" else col
         )
         cleaned_chunks.append(cleaned_chunk)
 
-    # Concatenar todos los fragmentos en un solo DataFrame
     df_concat = pd.concat(cleaned_chunks)
+    df_concat.columns = range(1, len(df_concat.columns) + 1)
 
-    # Cambiar los nombres de todas las columnas a números
-    df_concat.columns = range(1, len(df_concat.columns) + 1)  # Asigna números comenzando desde 1
+    df = df_concat[COLUMNAS_DESEADAS]
+    df.columns = CABECERAS_ORIGINALES
 
-    cabeceras = [
-        'LEGAJO',
-        'NOMBRE',
-        'DNI',
-        'CUIL',
-        'DIA-NAC',
-        'MES-NAC',
-        'ANIO-NAC',
-        'ESTADO',
-        'DIA-BAJA',
-        'MES-BAJA',
-        'ANIO-BAJA',
-        'MOTIVO-BAJA',
-    ]
+    df["FECHA-NAC"] = (
+        df["DIA-NAC"].astype(str)
+        + "/"
+        + df["MES-NAC"].astype(str)
+        + "/"
+        + df["ANIO-NAC"].astype(str)
+    )
+    df["FECHA-BAJA"] = (
+        df["DIA-BAJA"].astype(str)
+        + "/"
+        + df["MES-BAJA"].astype(str)
+        + "/"
+        + df["ANIO-BAJA"].astype(str)
+    )
 
-    # Seleccionar las columnas específicas
-    columnas_deseadas = [1, 11, 25, 26, 29, 30, 31, 198, 199, 200, 201, 202]
-    df = df_concat[columnas_deseadas]
-    df.columns = cabeceras
-
-    # Crear las columnas 'FECHA-NAC' y 'FECHA-BAJA' usando .loc
-    df.loc[:, 'FECHA-NAC'] = df['DIA-NAC'].astype(str) + '/' + df['MES-NAC'].astype(str) + '/' + df['ANIO-NAC'].astype(str)
-    df.loc[:, 'FECHA-BAJA'] = df['DIA-BAJA'].astype(str) + '/' + df['MES-BAJA'].astype(str) + '/' + df['ANIO-BAJA'].astype(str)
-
-    # Eliminar las columnas de día, mes y año
-    df = df.drop(columns=['DIA-NAC', 'MES-NAC', 'ANIO-NAC', 'DIA-BAJA', 'MES-BAJA', 'ANIO-BAJA'])
-
-    
-    df.columns = cabeceras2
+    df = df.drop(
+        columns=["DIA-NAC", "MES-NAC", "ANIO-NAC", "DIA-BAJA", "MES-BAJA", "ANIO-BAJA"]
+    )
+    df.columns = CABECERAS
     return df
 
-noviembre = converse(archivo1)
-diciembre = converse(archivo2)
 
-motivos_baja = ["1","2","3","4","5","6","7","8","9","A","B","C","D","E","F","P","X"]
+# Función para identificar movimientos entre dos DataFrames
+def identify_movements(maestro1_df, maestro2_df):
+    movimientos = pd.merge(
+        maestro1_df, maestro2_df, on="LEGAJO", how="outer", suffixes=("_m1", "_m2")
+    )
 
-# Merge los DataFrames en base a 'LEGAJO'
-movimientos = pd.merge(noviembre[cabeceras2], diciembre[cabeceras2], on='LEGAJO', how='outer', suffixes=('_nov', '_dic'))
+    movimientos["SITUACION"] = ""
 
-# Inicializar la columna 'SITUACIÓN'
-movimientos['SITUACION'] = ''
+    # Condiciones
+    movimientos.loc[
+        (movimientos["ESTADO_m1"].isna()) & (movimientos["ESTADO_m2"] == 0),
+        "SITUACION",
+    ] = "ALTA"
+
+    movimientos.loc[
+        (movimientos["ESTADO_m1"] == 0)
+        & (
+            (movimientos["MOTIVO-BAJA_m2"].isin(MOTIVOS_BAJA))
+            | (movimientos["ESTADO_m2"] > 0)
+            | movimientos["FECHA-BAJA_m2"].notna()
+        ),
+        "SITUACION",
+    ] = "BAJA"
+
+    movimientos.loc[
+        (movimientos["ESTADO_m1"] >= 1)
+        & (movimientos["ESTADO_m2"] == 0)
+        & (movimientos["MOTIVO-BAJA_m2"] == "0"),
+        "SITUACION",
+    ] = "REINCORPORACION"
+
+    # Filtrar registros
+    movimientos = movimientos[
+        ~((movimientos["ESTADO_m1"] != 0) & (movimientos["ESTADO_m2"] != 0))
+    ]
+    movimientos = movimientos[
+        ~((movimientos["ESTADO_m1"] == 0) & (movimientos["ESTADO_m2"] == 0))
+    ]
+    movimientos = movimientos[
+        ~(
+            (movimientos["ESTADO_m1"] == 1)
+            & (movimientos["MOTIVO-BAJA_m2"].isin(MOTIVOS_BAJA))
+        )
+    ]
+
+    # Eliminar columnas no deseadas
+    columnas_a_eliminar = ["NOMBRE_m1", "DNI_m1", "CUIL_m1", "FECHA-NAC_m1"]
+    movimientos = movimientos.drop(
+        columns=[col for col in columnas_a_eliminar if col in movimientos.columns]
+    )
+
+    # Reordenar columnas
+    columnas_ordenadas = [
+        "LEGAJO",
+        "NOMBRE_m2",
+        "DNI_m2",
+        "CUIL_m2",
+        "FECHA-NAC_m2",
+        "ESTADO_m1",
+        "MOTIVO-BAJA_m1",
+        "FECHA-BAJA_m1",
+        "ESTADO_m2",
+        "MOTIVO-BAJA_m2",
+        "FECHA-BAJA_m2",
+        "SITUACION",
+    ]
+    movimientos = movimientos[columnas_ordenadas]
+
+    return movimientos
 
 
-# Aplicar las condiciones
-# 1) Si el legajo no se encuentra en 'noviembre', pero sí en 'diciembre' y el 'estado' es 0
-movimientos.loc[(movimientos['ESTADO_nov'].isna()) & (movimientos['ESTADO_dic'] == 0), 'SITUACION'] = 'ALTA'
+# Función principal para ejecutar el script
+def main():
+    Tk().withdraw()  # Ocultar la ventana principal de Tkinter
 
-# 2) Si el legajo tiene 'estado' en 0 y en diciembre 'estado' es 1 o motivo de baja no es 0
-movimientos.loc[
-    (movimientos['ESTADO_nov'] == 0) & ((movimientos['MOTIVO-BAJA_dic'].isin(motivos_baja)) | (movimientos['ESTADO_dic'] > 0) | movimientos['FECHA-BAJA_dic'].str.contains(r'\D', na=False)), 'SITUACION'] = 'BAJA'
+    # Solicitar archivos al usuario
+    maestro1 = askopenfilename(
+        title="Seleccione el archivo MAESTRO 1",
+        filetypes=[["Archivos TXT", "*.txt"]],
+    )
+    maestro2 = askopenfilename(
+        title="Seleccione el archivo MAESTRO 2",
+        filetypes=[["Archivos TXT", "*.txt"]],
+    )
 
-# 3) Si el legajo tiene 'estado' en 1 y en diciembre 'estado' en 0
-movimientos.loc[(movimientos['ESTADO_nov'] >= 1) & ((movimientos['ESTADO_dic'] == 0) & (movimientos['MOTIVO-BAJA_dic'] == "0")), 'SITUACION'] = 'REINCORPORACION'
+    if not maestro1 or not maestro2:
+        print("Debe seleccionar ambos archivos. No sea pelotudo.")
+        return
 
-# 4) Filtrar los registros que no deben incluirse (estado en 1 en noviembre y diciembre)
-movimientos = movimientos[~((movimientos['ESTADO_nov'] != 0) & (movimientos['ESTADO_dic'] != 0))]
+    # Procesar archivos
+    maestro1_df = process_file(maestro1)
+    maestro2_df = process_file(maestro2)
 
-# Filtrar registros donde ambos estados son 0
-movimientos = movimientos[~((movimientos['ESTADO_nov'] == 0) & (movimientos['ESTADO_dic'] == 0))]
+    # Identificar movimientos
+    movimientos_df = identify_movements(maestro1_df, maestro2_df)
 
-movimientos = movimientos[~((movimientos['ESTADO_nov'] == 1) & (movimientos['MOTIVO-BAJA_dic'].isin(motivos_baja)))]
+    # Solicitar ubicación para guardar el archivo
+    output_file = asksaveasfilename(
+        title="Donde quiere guardar el resultado?",
+        defaultextension=".xlsx",
+        filetypes=[["Archivos Excel", "*.xlsx"]],
+    )
 
-movimientos.to_excel("movimientos.xlsx", index=False)
+    if not output_file:
+        print("No se seleccionó un archivo para guardar.")
+        return
+
+    # Exportar a Excel
+    movimientos_df.to_excel(output_file, index=False)
+    print(f"Archivo guardado en: {output_file}")
+
+
+if __name__ == "__main__":
+    main()
