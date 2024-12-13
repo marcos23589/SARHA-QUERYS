@@ -55,7 +55,7 @@ try:
    ,WEB.FECHA_PRESENTACION_AFIP desc
     """
     ruta_origen = "SALIDA"
-    ruta_destino = "S:\LDDAT\GANANCIAS"
+    ruta_destino = "S:\LDDAT\GANANCIAS\AGUINALDO"
 
     # llamamos al modulo borra_directorio(funcion delete_directory)
 
@@ -64,13 +64,13 @@ try:
     df_vertical = pd.read_sql(ganancias_sql, engine)
 
     df_vertical.to_excel(
-        f"S:\LDDAT\GANANCIAS\OCT-CA-{numero_liquidacion}-908.xlsx",
+        f"S:\LDDAT\GANANCIAS\SAC2-{numero_liquidacion}-908.xlsx",
         index=False,
         )
 
     # COPIA ARCHIVOS EXCEL A CARPETA EMBARGOS
     ruta_origen = "SALIDA"
-    ruta_destino = "S:\LDDAT\GANANCIAS"
+    ruta_destino = "S:\LDDAT\GANANCIAS\AGUINALDO"
 
     # Copio archivos a la carpeta del servidor
     shutil.copytree(ruta_origen, ruta_destino, dirs_exist_ok=True)

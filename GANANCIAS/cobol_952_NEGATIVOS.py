@@ -44,17 +44,17 @@ try:
    EL.nro_liquidacion  = {numero_liquidacion}                                                 --<<<<ACTUALIZAR AL NÚMERO DE LIQUIDACIÓN ANALIZADA
    AND CL.COD_CONCEPTO IN (327,332)
    and (EL.NO_PAGA is null or EL.NO_PAGA =2)
-   --AND CL.VALOR < 0                                                         --<<<<PARA QUE TRAIGA A LOS QUE SE LES CALCULA ALGO DE IMPUESTO A LAS GANANCIAS
+   AND CL.VALOR < 0                                                         --<<<<PARA QUE TRAIGA A LOS QUE SE LES CALCULA ALGO DE IMPUESTO A LAS GANANCIAS
    AND BRU.BRUTO_MIGRADO <= 3200000                            --<<<<PARA QUE TRAIGA A LOS QUE TIENEN SUELDO MENOR AL TOPE 
    AND WEB.FECHA_PRESENTACION_AFIP IS NOT NULL          --<<<<PARA QUE TRAIGA A LOS QUE HAN PRESENTADO ALGUNA VEZ SIRADIG
-   AND WEB.FECHA_PRESENTACION_AFIP > TO_DATE('17/10/2024 00:00:00', 'DD/MM/YYYY HH24:MI:SS')
-   AND WEB.FECHA_PRESENTACION_AFIP <  TO_DATE('18/11/2024 00:00:00', 'DD/MM/YYYY HH24:MI:SS')--<<<< SI SE QUIERE SABER LAS PRESENTACIONES DE SIRADIG REALIZADAS DESDE --CIERTO DIA
+   AND WEB.FECHA_PRESENTACION_AFIP > TO_DATE('18/11/2024 00:00:00', 'DD/MM/YYYY HH24:MI:SS')
+   AND WEB.FECHA_PRESENTACION_AFIP <  TO_DATE('13/12/2024 00:00:00', 'DD/MM/YYYY HH24:MI:SS')--<<<< SI SE QUIERE SABER LAS PRESENTACIONES DE SIRADIG REALIZADAS DESDE --CIERTO DIA
    ORDER BY 
    EL.CUIT, EL.APELLIDO, EL.NOMBRE
    ,WEB.FECHA_PRESENTACION_AFIP desc
     """
     ruta_origen = "SALIDA"
-    ruta_destino = "S:\LDDAT\GANANCIAS"
+    ruta_destino = "S:\LDDAT\GANANCIAS\AGUINALDO"
 
     # llamamos al modulo borra_directorio(funcion delete_directory)
 
@@ -63,13 +63,13 @@ try:
     df_vertical = pd.read_sql(ganancias_sql, engine)
 
     df_vertical.to_excel(
-        f"S:\LDDAT\GANANCIAS\OCT-NOV-CA-{numero_liquidacion}-952.xlsx",
+        f"S:\LDDAT\GANANCIAS\SAC2-{numero_liquidacion}-952.xlsx",
         index=False,
     )
 
     # COPIA ARCHIVOS EXCEL A CARPETA EMBARGOS
     ruta_origen = "SALIDA"
-    ruta_destino = "S:\LDDAT\GANANCIAS"
+    ruta_destino = "S:\LDDAT\GANANCIAS\AGUINALDO"
 
     # Copio archivos a la carpeta del servidor
     shutil.copytree(ruta_origen, ruta_destino, dirs_exist_ok=True)
