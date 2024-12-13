@@ -74,10 +74,63 @@ for cuil, group in df.groupby('CUIL'):
     resultados.append([cuil, 8790, total_8790])
     resultados.append([cuil, 8793, total_8793])
 
+
+
 # Crear un DataFrame con los resultados
 df_resultados = pd.DataFrame(resultados, columns=['CUIL', 'COD_CONCEPTO', 'IMPORTE'])
 
 df_resultados = df_resultados[df_resultados['IMPORTE'] != 0]
+
+
+# Renombrar la columna 'IMPORTE' a 'IMPORTE_GEN_HAB'
+df_resultados.rename(columns={'IMPORTE': 'IMPORTE_GEN_HAB'}, inplace=True)
+# Agregar las columnas faltantes con valores iniciales
+df_resultados = df_resultados.assign(
+    COD_SUBCONCEPTO="1",
+    FECHA_DESDE="11/2/2024",
+    PERIODO_DESDE="202411",
+    REINTEGRO="8",
+    FECHA_HASTA="30/10/2024",
+    CANTIDAD="1",
+    ID_TRANSACCION="210957",
+    FECHA_TRANSACCION="09/12/2024",
+    COD_TIPO_UNIDAD="5",
+    COD_UNIDAD="1",
+    COD_USUARIO="3633",
+    COD_CONVENIO="1",
+    OBSERVACION="GCIAS SALUD CA NOVIEMBRE",
+    GENERADO_HABERES="1",
+    FECHA_HASTA_TRANSITORIA=None,
+    NO_AUTOMATICO=None,
+    NRO_LIQ_PROCESADO=None,
+    POSPUESTO=None,
+    FECHA_POSPUESTO=None,
+    FECHA_ACTIVACION=None,
+    SECUENCIA_RETRO=None,
+    AUDICHK=None,
+    COD_EGRESO=None,
+    FECHA_HASTA_ANTERIOR=None
+)
+
+# Formatear la columna 'IMPORTE_GEN_HAB' para mostrar 2 decimales
+df_resultados['IMPORTE_GEN_HAB'] = pd.to_numeric(df_resultados['IMPORTE_GEN_HAB'], errors='coerce').round(2)
+
+# Reordenar las columnas del DataFrame
+columnas_ordenadas = [
+    "CUIL", "COD_CONCEPTO", "COD_SUBCONCEPTO", "FECHA_DESDE", "PERIODO_DESDE", "REINTEGRO",
+    "FECHA_HASTA", "CANTIDAD", "ID_TRANSACCION", "FECHA_TRANSACCION", "COD_TIPO_UNIDAD",
+    "COD_UNIDAD", "COD_USUARIO", "COD_CONVENIO", "OBSERVACION", "FECHA_HASTA_TRANSITORIA",
+    "GENERADO_HABERES", "IMPORTE_GEN_HAB", "NO_AUTOMATICO", "NRO_LIQ_PROCESADO", "POSPUESTO",
+    "FECHA_POSPUESTO", "FECHA_ACTIVACION", "SECUENCIA_RETRO", "AUDICHK", "COD_EGRESO",
+    "FECHA_HASTA_ANTERIOR"
+]
+
+df_resultados = df_resultados[columnas_ordenadas]
+
+# Ver el resultado
+print(df_resultados.head())
+
+
 
 # Guardar el DataFrame en un archivo Excel
 output_file = 'resultados.xlsx'
